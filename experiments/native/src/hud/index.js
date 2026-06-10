@@ -16,6 +16,7 @@ const HUD_LOADERS = {
   12: () => import('./Hud12InstancedMesh.svelte'),
   13: () => import('./Hud13BufferGeometry.svelte'),
   14: () => import('./Hud14ShaderMaterial.svelte'),
+  15: () => import('./Hud15PostProcessing.svelte'),
 };
 
 const OVERLAY_LOADERS = {
