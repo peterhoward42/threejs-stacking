@@ -15,6 +15,7 @@ const STEP_MODULES = {
   14: () => import('./steps/14-shader-material.js'),
   15: () => import('./steps/15-post-processing.js'),
   16: () => import('./steps/16-ibl-environments.js'),
+  17: () => import('./steps/17-render-targets.js'),
 };
 
 export function resolveStep() {

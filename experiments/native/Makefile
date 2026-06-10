@@ -23,6 +23,7 @@ help:
 	@echo "  make dev STEP=14    Launch curriculum step 14"
 	@echo "  make dev STEP=15    Launch curriculum step 15"
 	@echo "  make dev STEP=16    Launch curriculum step 16"
+	@echo "  make dev STEP=17    Launch curriculum step 17"
 	@echo "  make build          Production build"
 	@echo "  make preview        Preview production build"
 	@echo ""
