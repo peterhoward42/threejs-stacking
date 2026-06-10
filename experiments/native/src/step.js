@@ -10,6 +10,7 @@ const STEP_MODULES = {
   9: () => import('./steps/09-orbit-controls.js'),
   10: () => import('./steps/10-raycasting.js'),
   11: () => import('./steps/11-keyframes.js'),
+  12: () => import('./steps/12-instanced-mesh.js'),
 };
 
 export function resolveStep() {

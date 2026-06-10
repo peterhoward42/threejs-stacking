@@ -17,6 +17,7 @@ make dev STEP=8       # asset loading with GLTFLoader
 make dev STEP=9       # OrbitControls and the render loop
 make dev STEP=10      # raycasting and mesh picking
 make dev STEP=11      # keyframe animation with AnimationMixer
+make dev STEP=12      # InstancedMesh at scale
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -67,6 +68,10 @@ Four named meshes on the left and a 10×10 `InstancedMesh` grid on the right. Po
 
 Three pedestals: procedural `AnimationClip` built from `VectorKeyframeTrack` (bounce + spin on a box), morph `NumberKeyframeTrack` on `morphTargetInfluences` (bulge/twist targets), and `brain-stem.glb` clips driven by a third mixer. HUD controls loop mode (`LoopRepeat`, `LoopOnce` + clamp, `LoopPingPong`), global time scale and play/pause, clip restart, and glTF crossfade duration with per-action weight readout.
 
+## Step 12 — InstancedMesh at scale
+
+Thousands of cones via a single `InstancedMesh` using `setMatrixAt` and `setColorAt` (HSL gradient per instance). Toggle grid vs scatter placement on an undulating ground plane. Switch to naive per-mesh clones to contrast `renderer.info.render.calls`, triangle count, and frame time; clone mode caps count to keep the tab responsive. Optional per-instance matrix animation shows live `instanceMatrix` updates.
+
 ## Commands
 
 ```sh
@@ -103,5 +108,6 @@ native/
         ├── 08-gltf-loading.js
         ├── 09-orbit-controls.js
         ├── 10-raycasting.js
-        └── 11-keyframes.js
+        ├── 11-keyframes.js
+        └── 12-instanced-mesh.js
 ```
