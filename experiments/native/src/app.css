@@ -10,10 +10,19 @@ body,
   margin: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 body {
   font-family: system-ui, sans-serif;
   background: #111118;
   color: #e8e8ef;
+}
+
+/* Three.js sets drawing-buffer dimensions on the canvas; CSS owns layout size. */
+.canvas-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

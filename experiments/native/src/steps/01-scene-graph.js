@@ -150,7 +150,7 @@ export function mount(container, { onHudUpdate } = {}) {
     camera.aspect = clientWidth / clientHeight;
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(clientWidth, clientHeight);
+    renderer.setSize(clientWidth, clientHeight, false);
   }
 
   const resizeObserver = new ResizeObserver(resize);

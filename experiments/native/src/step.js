@@ -1,5 +1,6 @@
 const STEP_MODULES = {
   1: () => import('./steps/01-scene-graph.js'),
+  2: () => import('./steps/02-cameras.js'),
 };
 
 export function resolveStep() {

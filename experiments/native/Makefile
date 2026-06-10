@@ -8,6 +8,7 @@ help:
 	@echo "  make install        Install dependencies"
 	@echo "  make dev            Run dev server (STEP=$(STEP))"
 	@echo "  make dev STEP=1     Launch curriculum step 1"
+	@echo "  make dev STEP=2     Launch curriculum step 2"
 	@echo "  make build          Production build"
 	@echo "  make preview        Preview production build"
 	@echo ""
