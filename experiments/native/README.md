@@ -13,6 +13,7 @@ make dev STEP=4       # material comparison lab
 make dev STEP=5       # light types and real-time shadows
 make dev STEP=6       # PBR maps on MeshStandardMaterial
 make dev STEP=7       # textures and sampling behaviour
+make dev STEP=8       # asset loading with GLTFLoader
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -47,6 +48,10 @@ A subdivided box with procedural canvas textures in every `MeshStandardMaterial`
 
 Image and canvas texture sources on labelled planes: the hero plane exposes `wrapS` / `wrapT`, `repeat`, `offset`, `rotation`, `minFilter` / `magFilter`, `anisotropy`, and `colorSpace`. Static rows compare wrap modes, magnification filters, and sRGB vs linear sampling on the same gradient. A third plane runs an animated `CanvasTexture` redrawn each frame.
 
+## Step 8 — Asset loading with GLTFLoader
+
+Loads `common/assets/brain-stem.glb` with progress and error callbacks. After load, `scene.traverse` lists every mesh and unique material; pick a mesh and swap its material (original, wireframe, normal view, or emissive accent). Embedded clips play through `AnimationMixer`; reload or trigger a missing-file error from the HUD.
+
 ## Commands
 
 ```sh
@@ -79,5 +84,6 @@ native/
         ├── 04-materials.js
         ├── 05-lights.js
         ├── 06-pbr-maps.js
-        └── 07-textures.js
+        ├── 07-textures.js
+        └── 08-gltf-loading.js
 ```

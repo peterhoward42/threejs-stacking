@@ -14,6 +14,7 @@ help:
 	@echo "  make dev STEP=5     Launch curriculum step 5"
 	@echo "  make dev STEP=6     Launch curriculum step 6"
 	@echo "  make dev STEP=7     Launch curriculum step 7"
+	@echo "  make dev STEP=8     Launch curriculum step 8"
 	@echo "  make build          Production build"
 	@echo "  make preview        Preview production build"
 	@echo ""

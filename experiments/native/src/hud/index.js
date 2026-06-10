@@ -9,6 +9,7 @@ const HUD_LOADERS = {
   5: () => import('./Hud05Lights.svelte'),
   6: () => import('./Hud06PbrMaps.svelte'),
   7: () => import('./Hud07Textures.svelte'),
+  8: () => import('./Hud08GltfLoading.svelte'),
 };
 
 const OVERLAY_LOADERS = {
