@@ -4,6 +4,14 @@ Numbered topics for sequential experiments in `experiments/native`. Each step sh
 
 Assumes solid general 3D literacy (transforms, projections, meshes, UVs, rigging concepts). Focus is on **what Three.js provides and how its APIs hang together**.
 
+## Launch and isolation
+
+Each numbered topic is an **independent experiment**—not another layer on the same running scene. You must be able to **launch one step deliberately** without the others loading, fighting for the canvas, or leaving shared state behind.
+
+That usually means **separate launch points** (e.g. `make dev STEP=10`, per-step Vite entries, or distinct HTML shells). A single dev server is fine if it still gives explicit control: an in-app step picker, route, or query param that mounts **exactly one** demo and tears down the previous one. Orchestration can live in the Makefile, in the app, or both—choose whatever stays simplest as the list grows.
+
+Isolation is a requirement alongside the visual demo. When implementing a step, wire up how it is launched, not only what it shows.
+
 ---
 
 ## 1. Scene graph and transforms
@@ -110,4 +118,4 @@ Parallel entry using `WebGPURenderer` (where supported): same minimal scene as s
 
 ## How to use this list
 
-Prompt with the step number, e.g. *"Implement native step 10"* or *"Replace the current demo with curriculum step 5"*. Each implementation should remain a self-contained observable demo unless you ask to accumulate features across steps.
+Prompt with the step number, e.g. *"Implement native step 10"* or *"Replace the current demo with curriculum step 5"*. Each implementation should remain a self-contained observable demo with its own launch path (see **Launch and isolation** above) unless you ask to accumulate features across steps.
