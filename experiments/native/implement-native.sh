@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # Run native curriculum steps through the Cursor Agent CLI.
-# Each step starts a fresh agent session (no --continue / --resume).
+# Each step is a separate cursor-agent invocation (new Cursor chat, no --continue).
+# One terminal run loops through every remaining step until 25 or a failure.
 #
 # Usage:
-#   ./implement-native.sh              # next unimplemented step (1–25)
+#   ./implement-native.sh              # all remaining steps (default)
+#   ./implement-native.sh --one        # next unimplemented step only
 #   ./implement-native.sh 4            # step 4 only
-#   ./implement-native.sh 4 6          # steps 4, 5, and 6 (one session each)
-#   ./implement-native.sh --all          # every remaining step through 25
+#   ./implement-native.sh 4 6          # steps 4, 5, and 6 (new Cursor session each)
 #   ./implement-native.sh login        # authenticate the CLI
-#   ./implement-native.sh --dry-run --all
+#   ./implement-native.sh --dry-run
 #
 # Environment:
 #   AGENT_BIN        path to cursor-agent / agent (auto-detected if unset)
@@ -27,14 +28,15 @@ PLANNING_DOC="docs/planning/native.md"
 MAX_STEP=25
 
 DRY_RUN=0
-RUN_ALL=0
+RUN_ONE=0
 AGENT=""
 
 usage() {
   cat <<'EOF'
 implement-native.sh — implement native curriculum steps via Cursor Agent CLI
 
-Each invocation of this script starts a new agent session per step.
+Each step runs cursor-agent once (fresh Cursor chat). The script loops in one
+terminal until every remaining step is done or one fails.
 
 Usage:
   ./implement-native.sh login
@@ -45,20 +47,21 @@ Commands:
   login                Run Cursor Agent login (cursor-agent login)
 
 Options:
-  --all, --remaining   Run every step from the next unimplemented through 25
+  --one                Run only the next unimplemented step
+  --all, --remaining   Same as the default (all remaining steps through 25)
   --dry-run            Print the agent command and prompt; do not run
   -h, --help           Show this help
 
-With no STEP arguments, runs the next step after the highest file in src/steps/.
+With no STEP arguments, runs every step from the next unimplemented through 25.
 With one STEP, runs that step only. With FROM TO, runs the inclusive range.
 
 Examples:
   ./implement-native.sh login
   ./implement-native.sh
-  ./implement-native.sh --all
+  ./implement-native.sh --one
   ./implement-native.sh 3
   ./implement-native.sh 4 7
-  ./implement-native.sh --dry-run --all
+  ./implement-native.sh --dry-run
   CURSOR_MODEL=sonnet-4 ./implement-native.sh 5
 
 Requires: Cursor Agent CLI (cursor-agent or agent). Run ./implement-native.sh login
@@ -173,7 +176,7 @@ remaining_steps() {
 
 prompt_for_step() {
   local step=$1
-  printf 'Read %s then implement native:%s only.' "$PLANNING_DOC" "$step"
+  printf 'Read %s then implement native:%s only. Put step-specific HUD UI in experiments/native/src/hud/ (register in hud/index.js); keep App.svelte as a thin shell.' "$PLANNING_DOC" "$step"
 }
 
 run_step() {
@@ -182,7 +185,7 @@ run_step() {
   prompt="$(prompt_for_step "$step")"
 
   echo ""
-  echo "=== native step $step (new session) ==="
+  echo "=== native step $step (new Cursor agent session) ==="
   echo "Prompt: $prompt"
   echo ""
 
@@ -223,8 +226,11 @@ parse_args() {
 
   while (($# > 0)); do
     case "$1" in
+      --one)
+        RUN_ONE=1
+        shift
+        ;;
       --all|--remaining)
-        RUN_ALL=1
         shift
         ;;
       --dry-run)
@@ -250,19 +256,19 @@ parse_args() {
     esac
   done
 
-  if (( RUN_ALL )); then
-    ((${#args[@]} == 0)) || die "--all cannot be combined with step numbers"
-    remaining_steps
+  if ((${#args[@]} == 0)); then
+    if (( RUN_ONE )); then
+      local n
+      n="$(next_step)"
+      (( n <= MAX_STEP )) || die "all $MAX_STEP steps already have files in src/steps/"
+      STEPS=("$n")
+    else
+      remaining_steps
+    fi
     return
   fi
 
-  if ((${#args[@]} == 0)); then
-    local n
-    n="$(next_step)"
-    (( n <= MAX_STEP )) || die "all $MAX_STEP steps already have files in src/steps/"
-    STEPS=("$n")
-    return
-  fi
+  (( RUN_ONE )) && die "--one cannot be combined with step numbers"
 
   if ((${#args[@]} == 1)); then
     STEPS=("${args[0]}")

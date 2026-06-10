@@ -1,11 +1,21 @@
 *  be clear about independence of each native experiment
 *  auto gen native:1
 *  auto gen native:2
-o  auto gen native:3
+*  auto gen native:3
+
+o  create automation script to do all of the rest together
+	*  create it
+	*  debug it
+	*  run it
+	o  resume doing one step at a time
+		o  do 8 again
+			o  ask cursor to remove it first
 
 
 Read docs/planning/native.md then implement native:2 only.
 
 
 o  Questions to remember
+	o  Curious why LLM chose javascript over typescript
+		o  It makes the code much easier to read
 	o  Does it model vertex and pixel shaders? Re. primitives demo.

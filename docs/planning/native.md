@@ -12,6 +12,8 @@ That usually means **separate launch points** (e.g. `make dev STEP=10`, per-step
 
 Isolation is a requirement alongside the visual demo. When implementing a step, wire up how it is launched, not only what it shows.
 
+Step-specific HUD panels live in `experiments/native/src/hud/` (one Svelte component per step, registered in `hud/index.js`). Keep `App.svelte` as a thin shell — do not accumulate step UI there.
+
 ---
 
 ## 1. Scene graph and transforms

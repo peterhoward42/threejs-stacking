@@ -9,6 +9,10 @@ make install          # once
 make dev STEP=1       # scene graph and transforms
 make dev STEP=2       # cameras and projection
 make dev STEP=3       # built-in geometry and BufferGeometry anatomy
+make dev STEP=4       # material comparison lab
+make dev STEP=5       # light types and real-time shadows
+make dev STEP=6       # PBR maps on MeshStandardMaterial
+make dev STEP=7       # textures and sampling behaviour
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -26,6 +30,22 @@ The canvas splits into two viewports: `PerspectiveCamera` on the left, `Orthogra
 ## Step 3 — Built-in geometry and BufferGeometry anatomy
 
 A gallery of primitives (`Box`, `Sphere`, `Cylinder`, `Torus`, `Plane`, `Cone`, `TorusKnot`, `Icosahedron`), each with its own material. Click a mesh or use the HUD list to inspect `geometry.attributes` (position, normal, uv), index buffer, and sample values. Switch colour mode to paint vertices by local position or normals by direction.
+
+## Step 4 — Material comparison lab
+
+The same `TorusKnotGeometry` repeated in a grid with `MeshBasicMaterial`, `MeshLambertMaterial`, `MeshPhongMaterial`, `MeshStandardMaterial`, `MeshPhysicalMaterial`, `MeshNormalMaterial`, and `MeshMatcapMaterial`. Directional, ambient, and point lights reveal shading differences; toggle wireframe to inspect tessellation. Floor labels name each material type.
+
+## Step 5 — Light types and real-time shadows
+
+One scene with a hero torus knot and primitive props on a shadow-receiving ground plane. Switch between `AmbientLight`, `HemisphereLight`, `DirectionalLight`, `PointLight`, `SpotLight`, and `RectAreaLight` (with `RectAreaLightUniformsLib`). Directional, point, and spot lights cast real-time shadows; tune `shadow.mapSize`, bias, normal bias, and the directional shadow camera frustum. Optional helpers show light position and aim.
+
+## Step 6 — PBR maps on MeshStandardMaterial
+
+A subdivided box with procedural canvas textures in every `MeshStandardMaterial` map slot: `map`, `normalMap`, `roughnessMap`, `metalnessMap`, `aoMap`, and `displacementMap`. Toggle each map in the HUD; switch between separate data textures and one packed ORM image (R=AO, G=roughness, B=metalness). Adjust UV repeat to see map alignment depend on `uv` / `uv2`, and tune displacement strength on the dense geometry.
+
+## Step 7 — Textures and sampling behaviour
+
+Image and canvas texture sources on labelled planes: the hero plane exposes `wrapS` / `wrapT`, `repeat`, `offset`, `rotation`, `minFilter` / `magFilter`, `anisotropy`, and `colorSpace`. Static rows compare wrap modes, magnification filters, and sRGB vs linear sampling on the same gradient. A third plane runs an animated `CanvasTexture` redrawn each frame.
 
 ## Commands
 
@@ -55,5 +75,9 @@ native/
     └── steps/
         ├── 01-scene-graph.js
         ├── 02-cameras.js
-        └── 03-geometry.js
+        ├── 03-geometry.js
+        ├── 04-materials.js
+        ├── 05-lights.js
+        ├── 06-pbr-maps.js
+        └── 07-textures.js
 ```

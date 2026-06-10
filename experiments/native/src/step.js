@@ -2,6 +2,10 @@ const STEP_MODULES = {
   1: () => import('./steps/01-scene-graph.js'),
   2: () => import('./steps/02-cameras.js'),
   3: () => import('./steps/03-geometry.js'),
+  4: () => import('./steps/04-materials.js'),
+  5: () => import('./steps/05-lights.js'),
+  6: () => import('./steps/06-pbr-maps.js'),
+  7: () => import('./steps/07-textures.js'),
 };
 
 export function resolveStep() {
