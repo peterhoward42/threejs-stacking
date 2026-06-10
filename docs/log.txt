@@ -1,0 +1,2 @@
+o  be clear about independence of each native experiment
+o  auto gen native:1
