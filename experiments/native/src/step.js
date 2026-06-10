@@ -14,6 +14,7 @@ const STEP_MODULES = {
   13: () => import('./steps/13-buffer-geometry.js'),
   14: () => import('./steps/14-shader-material.js'),
   15: () => import('./steps/15-post-processing.js'),
+  16: () => import('./steps/16-ibl-environments.js'),
 };
 
 export function resolveStep() {
