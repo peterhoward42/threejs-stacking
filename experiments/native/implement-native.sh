@@ -7,14 +7,18 @@
 #   ./implement-native.sh 4            # step 4 only
 #   ./implement-native.sh 4 6          # steps 4, 5, and 6 (one session each)
 #   ./implement-native.sh --all          # every remaining step through 25
+#   ./implement-native.sh login        # authenticate the CLI
 #   ./implement-native.sh --dry-run --all
 #
 # Environment:
-#   AGENT_BIN        path to the agent binary (default: agent on PATH, then ~/.local/bin/agent)
+#   AGENT_BIN        path to cursor-agent / agent (auto-detected if unset)
 #   CURSOR_MODEL     passed as --model when set
-#   CURSOR_API_KEY   alternative to `agent login` for headless runs
+#   CURSOR_API_KEY   alternative to login for headless runs
 
 set -euo pipefail
+
+# Cursor CLI installs cursor-agent and agent under ~/.local/bin; shells often omit it.
+export PATH="$HOME/.local/bin:$PATH"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -33,8 +37,12 @@ implement-native.sh — implement native curriculum steps via Cursor Agent CLI
 Each invocation of this script starts a new agent session per step.
 
 Usage:
+  ./implement-native.sh login
   ./implement-native.sh [options] [STEP]
   ./implement-native.sh [options] FROM TO
+
+Commands:
+  login                Run Cursor Agent login (cursor-agent login)
 
 Options:
   --all, --remaining   Run every step from the next unimplemented through 25
@@ -45,6 +53,7 @@ With no STEP arguments, runs the next step after the highest file in src/steps/.
 With one STEP, runs that step only. With FROM TO, runs the inclusive range.
 
 Examples:
+  ./implement-native.sh login
   ./implement-native.sh
   ./implement-native.sh --all
   ./implement-native.sh 3
@@ -52,7 +61,8 @@ Examples:
   ./implement-native.sh --dry-run --all
   CURSOR_MODEL=sonnet-4 ./implement-native.sh 5
 
-Requires: Cursor Agent CLI (`agent login` or CURSOR_API_KEY).
+Requires: Cursor Agent CLI (cursor-agent or agent). Run ./implement-native.sh login
+once, or set CURSOR_API_KEY. Add ~/.local/bin to PATH if you want the commands directly.
 EOF
 }
 
@@ -62,25 +72,67 @@ die() {
 }
 
 resolve_agent() {
+  local candidate
+
   if [[ -n "${AGENT_BIN:-}" ]]; then
     AGENT="$AGENT_BIN"
-  elif command -v agent >/dev/null 2>&1; then
-    AGENT="$(command -v agent)"
-  elif [[ -x "$HOME/.local/bin/agent" ]]; then
-    AGENT="$HOME/.local/bin/agent"
-  else
-    die "agent not found; install the Cursor CLI or set AGENT_BIN"
+    return
   fi
+
+  # Prefer cursor-agent: same binary as agent, fewer name clashes on PATH.
+  for candidate in cursor-agent agent; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      AGENT="$(command -v "$candidate")"
+      return
+    fi
+  done
+
+  for candidate in "$HOME/.local/bin/cursor-agent" "$HOME/.local/bin/agent"; do
+    if [[ -x "$candidate" ]]; then
+      AGENT="$candidate"
+      return
+    fi
+  done
+
+  die "cursor-agent not found; install: curl https://cursor.com/install -fsS | bash"
+}
+
+auth_hint() {
+  cat >&2 <<EOF
+implement-native.sh: Cursor Agent is not authenticated for headless runs.
+
+  ./implement-native.sh login
+
+Or: cursor-agent login   (after adding ~/.local/bin to PATH)
+Or set CURSOR_API_KEY (from cursor.com/settings).
+
+CLI binary: $AGENT
+EOF
+}
+
+headless_authenticated() {
+  if [[ -n "${CURSOR_API_KEY:-}" ]]; then
+    return 0
+  fi
+
+  local about_json
+  about_json="$("$AGENT" about --format json 2>/dev/null)" || return 1
+  grep -qE '"userEmail"[[:space:]]*:[[:space:]]*"[^"]+"' <<<"$about_json"
 }
 
 require_agent() {
   resolve_agent
 
-  if [[ -z "${CURSOR_API_KEY:-}" ]]; then
-    if ! "$AGENT" status >/dev/null 2>&1; then
-      die "not logged in; run 'agent login' or set CURSOR_API_KEY"
-    fi
+  if ! headless_authenticated; then
+    auth_hint
+    exit 1
   fi
+}
+
+run_login() {
+  resolve_agent
+  echo "Running: $AGENT login"
+  exec "$AGENT" login
 }
 
 highest_implemented_step() {
@@ -158,7 +210,12 @@ run_step() {
 
   cmd+=("$prompt")
 
-  (cd "$REPO_ROOT" && "${cmd[@]}")
+  if ! (cd "$REPO_ROOT" && "${cmd[@]}"); then
+    if ! headless_authenticated; then
+      auth_hint
+    fi
+    return 1
+  fi
 }
 
 parse_args() {
@@ -233,6 +290,10 @@ validate_steps() {
 }
 
 main() {
+  if [[ "${1:-}" == "login" ]]; then
+    run_login
+  fi
+
   local STEPS=()
 
   parse_args "$@"
