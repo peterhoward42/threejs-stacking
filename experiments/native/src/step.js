@@ -7,6 +7,7 @@ const STEP_MODULES = {
   6: () => import('./steps/06-pbr-maps.js'),
   7: () => import('./steps/07-textures.js'),
   8: () => import('./steps/08-gltf-loading.js'),
+  9: () => import('./steps/09-orbit-controls.js'),
 };
 
 export function resolveStep() {

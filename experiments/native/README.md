@@ -14,6 +14,7 @@ make dev STEP=5       # light types and real-time shadows
 make dev STEP=6       # PBR maps on MeshStandardMaterial
 make dev STEP=7       # textures and sampling behaviour
 make dev STEP=8       # asset loading with GLTFLoader
+make dev STEP=9       # OrbitControls and the render loop
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -52,6 +53,10 @@ Image and canvas texture sources on labelled planes: the hero plane exposes `wra
 
 Loads `common/assets/brain-stem.glb` with progress and error callbacks. After load, `scene.traverse` lists every mesh and unique material; pick a mesh and swap its material (original, wireframe, normal view, or emissive accent). Embedded clips play through `AnimationMixer`; reload or trigger a missing-file error from the HUD.
 
+## Step 9 — OrbitControls and the render loop
+
+Three orbiting rings of boxes around a central hub. `Clock.getDelta()` drives simulation; `OrbitControls` handles drag-orbit, scroll-zoom, and right-drag pan with optional damping. The HUD exposes damping, zoom limits, pan/rotate/zoom toggles, and target height; pause simulation to see controls and render stay live. Pink marker shows `controls.target`.
+
 ## Commands
 
 ```sh
@@ -85,5 +90,6 @@ native/
         ├── 05-lights.js
         ├── 06-pbr-maps.js
         ├── 07-textures.js
-        └── 08-gltf-loading.js
+        ├── 08-gltf-loading.js
+        └── 09-orbit-controls.js
 ```
