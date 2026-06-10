@@ -1,2 +1,11 @@
-o  be clear about independence of each native experiment
-o  auto gen native:1
+*  be clear about independence of each native experiment
+*  auto gen native:1
+*  auto gen native:2
+o  auto gen native:3
+
+
+Read docs/planning/native.md then implement native:2 only.
+
+
+o  Questions to remember
+	o  Does it model vertex and pixel shaders? Re. primitives demo.

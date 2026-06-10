@@ -9,6 +9,7 @@ help:
 	@echo "  make dev            Run dev server (STEP=$(STEP))"
 	@echo "  make dev STEP=1     Launch curriculum step 1"
 	@echo "  make dev STEP=2     Launch curriculum step 2"
+	@echo "  make dev STEP=3     Launch curriculum step 3"
 	@echo "  make build          Production build"
 	@echo "  make preview        Preview production build"
 	@echo ""

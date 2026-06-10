@@ -19,6 +19,10 @@
   let orthoSize = 8;
   let showHelpers = true;
 
+  // Step 3
+  let selectedId = 'box';
+  let displayMode = 'material';
+
   $: if (step === 1) stepApi?.setAutoUpdateMatrices(autoUpdateMatrices);
   $: if (step === 2) {
     stepApi?.setFov(fov);
@@ -26,6 +30,10 @@
     stepApi?.setFar(far);
     stepApi?.setOrthoSize(orthoSize);
     stepApi?.setShowHelpers(showHelpers);
+  }
+  $: if (step === 3) {
+    stepApi?.setSelectedId(selectedId);
+    stepApi?.setDisplayMode(displayMode);
   }
 
   function fmt(n) {
@@ -63,6 +71,10 @@
           far = hud.far ?? far;
           orthoSize = hud.orthoSize ?? orthoSize;
           showHelpers = hud.showHelpers ?? showHelpers;
+        }
+        if (step === 3) {
+          selectedId = hud.selectedId ?? selectedId;
+          displayMode = hud.displayMode ?? displayMode;
         }
       } catch (err) {
         loadError = err instanceof Error ? err.message : String(err);
@@ -202,6 +214,118 @@
                 <dd>{fmt(hud.orthographic.near)} / {fmt(hud.orthographic.far)}</dd>
               </dl>
             </section>
+          {/if}
+        {:else if step === 3}
+          <h2>BufferGeometry inspector</h2>
+          <p class="hint">
+            Click a mesh in the canvas or pick from the list. Vertex colours map local position; normal
+            colours map each vertex normal to RGB.
+          </p>
+
+          <fieldset class="primitive-list">
+            <legend>Primitives</legend>
+            {#each hud.primitives ?? [] as primitive}
+              <label class="primitive-option">
+                <input
+                  type="radio"
+                  name="primitive"
+                  value={primitive.id}
+                  bind:group={selectedId}
+                />
+                <span>{primitive.label}</span>
+              </label>
+            {/each}
+          </fieldset>
+
+          <fieldset class="display-modes">
+            <legend>Colour mode</legend>
+            <label class="primitive-option">
+              <input type="radio" name="displayMode" value="material" bind:group={displayMode} />
+              <span>Material colour</span>
+            </label>
+            <label class="primitive-option">
+              <input type="radio" name="displayMode" value="vertices" bind:group={displayMode} />
+              <span>Vertex position → RGB</span>
+            </label>
+            <label class="primitive-option">
+              <input type="radio" name="displayMode" value="normals" bind:group={displayMode} />
+              <span>Normal → RGB</span>
+            </label>
+          </fieldset>
+
+          {#if hud.selected?.geometry}
+            {@const geo = hud.selected.geometry}
+            <section class="node">
+              <h3>{hud.selected.label}</h3>
+              <dl>
+                <dt>type</dt>
+                <dd>{geo.type}</dd>
+                <dt>drawRange</dt>
+                <dd>{geo.drawRange.start} + {geo.drawRange.count || 'all'}</dd>
+              </dl>
+            </section>
+
+            <section class="node">
+              <h3>attributes</h3>
+              {#each Object.entries(geo.attributes) as [name, attr]}
+                <dl class="attr-row">
+                  <dt>{name}</dt>
+                  <dd>itemSize {attr.itemSize}, count {attr.count}{attr.normalized ? ', normalized' : ''}</dd>
+                </dl>
+              {/each}
+            </section>
+
+            <section class="node">
+              <h3>index</h3>
+              {#if geo.index}
+                <dl>
+                  <dt>count</dt>
+                  <dd>{geo.index.count}</dd>
+                  {#if geo.indexSamples}
+                    <dt>first values</dt>
+                    <dd class="mono">[{geo.indexSamples.join(', ')}]</dd>
+                  {/if}
+                </dl>
+              {:else}
+                <p class="hint inline">Non-indexed — vertices drawn in attribute order.</p>
+              {/if}
+            </section>
+
+            {#if geo.samples.position}
+              <section class="node">
+                <h3>Sample position</h3>
+                {#each geo.samples.position as v, i}
+                  <dl class="attr-row">
+                    <dt>[{i}]</dt>
+                    <dd>{fmtVec(v)}</dd>
+                  </dl>
+                {/each}
+              </section>
+            {/if}
+
+            {#if geo.samples.normal}
+              <section class="node">
+                <h3>Sample normal</h3>
+                {#each geo.samples.normal as v, i}
+                  <dl class="attr-row">
+                    <dt>[{i}]</dt>
+                    <dd>{fmtVec(v)}</dd>
+                  </dl>
+                {/each}
+              </section>
+            {/if}
+
+            {#if geo.samples.uv}
+              <section class="node">
+                <h3>Sample uv</h3>
+                {#each geo.samples.uv as v, i}
+                  <dl class="attr-row">
+                    <dt>[{i}]</dt>
+                    <dd>({fmt(v.x)}, {fmt(v.y)})</dd>
+                  </dl>
+                {/each}
+              </section>
+            {/if}
           {/if}
         {/if}
       </aside>
@@ -414,5 +538,36 @@
 
   code {
     font-size: 0.85em;
+  }
+
+  fieldset {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.6rem 0.55rem;
+    border: 1px solid #252530;
+    border-radius: 0.35rem;
+  }
+
+  legend {
+    padding: 0 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9a9aad;
+  }
+
+  .primitive-option {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0.2rem 0;
+    cursor: pointer;
+    color: #c8c8d8;
+  }
+
+  .attr-row {
+    margin-bottom: 0.15rem;
+  }
+
+  .hint.inline {
+    margin: 0;
   }
 </style>

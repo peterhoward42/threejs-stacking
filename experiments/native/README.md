@@ -8,6 +8,7 @@ Bare Three.js with a Svelte UI. Numbered curriculum steps live in `src/steps/` �
 make install          # once
 make dev STEP=1       # scene graph and transforms
 make dev STEP=2       # cameras and projection
+make dev STEP=3       # built-in geometry and BufferGeometry anatomy
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -21,6 +22,10 @@ Nested groups (`root` → `arm` → `wrist` → `cube`) rotate at different rate
 ## Step 2 — Cameras and projection
 
 The canvas splits into two viewports: `PerspectiveCamera` on the left, `OrthographicCamera` on the right, both aimed at the same scene. Sliders adjust fov, near/far, and orthographic frustum height; toggle `CameraHelper` wireframes to see each frustum in world space.
+
+## Step 3 — Built-in geometry and BufferGeometry anatomy
+
+A gallery of primitives (`Box`, `Sphere`, `Cylinder`, `Torus`, `Plane`, `Cone`, `TorusKnot`, `Icosahedron`), each with its own material. Click a mesh or use the HUD list to inspect `geometry.attributes` (position, normal, uv), index buffer, and sample values. Switch colour mode to paint vertices by local position or normals by direction.
 
 ## Commands
 
@@ -49,5 +54,6 @@ native/
     ├── App.svelte        # shell + HUD
     └── steps/
         ├── 01-scene-graph.js
-        └── 02-cameras.js
+        ├── 02-cameras.js
+        └── 03-geometry.js
 ```
