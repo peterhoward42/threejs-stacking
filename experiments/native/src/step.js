@@ -9,6 +9,7 @@ const STEP_MODULES = {
   8: () => import('./steps/08-gltf-loading.js'),
   9: () => import('./steps/09-orbit-controls.js'),
   10: () => import('./steps/10-raycasting.js'),
+  11: () => import('./steps/11-keyframes.js'),
 };
 
 export function resolveStep() {

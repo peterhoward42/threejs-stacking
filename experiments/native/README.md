@@ -16,6 +16,7 @@ make dev STEP=7       # textures and sampling behaviour
 make dev STEP=8       # asset loading with GLTFLoader
 make dev STEP=9       # OrbitControls and the render loop
 make dev STEP=10      # raycasting and mesh picking
+make dev STEP=11      # keyframe animation with AnimationMixer
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -62,6 +63,10 @@ Three orbiting rings of boxes around a central hub. `Clock.getDelta()` drives si
 
 Four named meshes on the left and a 10×10 `InstancedMesh` grid on the right. Pointer NDC feeds `Raycaster`; hover uses emissive tint on meshes and `setColorAt` on instances. Click to select and log `faceIndex` (meshes) or `instanceId` (instanced). HUD toggles pick targets — individual, instanced, or both (nearest hit) — and shows hover/selection readouts plus a click log.
 
+## Step 11 — Keyframe animation with AnimationMixer
+
+Three pedestals: procedural `AnimationClip` built from `VectorKeyframeTrack` (bounce + spin on a box), morph `NumberKeyframeTrack` on `morphTargetInfluences` (bulge/twist targets), and `brain-stem.glb` clips driven by a third mixer. HUD controls loop mode (`LoopRepeat`, `LoopOnce` + clamp, `LoopPingPong`), global time scale and play/pause, clip restart, and glTF crossfade duration with per-action weight readout.
+
 ## Commands
 
 ```sh
@@ -97,5 +102,6 @@ native/
         ├── 07-textures.js
         ├── 08-gltf-loading.js
         ├── 09-orbit-controls.js
-        └── 10-raycasting.js
+        ├── 10-raycasting.js
+        └── 11-keyframes.js
 ```
