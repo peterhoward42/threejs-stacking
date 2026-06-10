@@ -18,6 +18,7 @@ make dev STEP=9       # OrbitControls and the render loop
 make dev STEP=10      # raycasting and mesh picking
 make dev STEP=11      # keyframe animation with AnimationMixer
 make dev STEP=12      # InstancedMesh at scale
+make dev STEP=13      # procedural custom BufferGeometry
 ```
 
 Or open the dev server with a query param: `http://localhost:5173/?step=2`
@@ -72,6 +73,10 @@ Three pedestals: procedural `AnimationClip` built from `VectorKeyframeTrack` (bo
 
 Thousands of cones via a single `InstancedMesh` using `setMatrixAt` and `setColorAt` (HSL gradient per instance). Toggle grid vs scatter placement on an undulating ground plane. Switch to naive per-mesh clones to contrast `renderer.info.render.calls`, triangle count, and frame time; clone mode caps count to keep the tab responsive. Optional per-instance matrix animation shows live `instanceMatrix` updates.
 
+## Step 13 — Procedural custom BufferGeometry
+
+Three geometry builders from scratch: a parametric sine surface, a terrain heightfield on an XZ grid, and an icosahedron with hand-written vertices and face indices. Each allocates `Float32Array` position and UV buffers, optionally expands to non-indexed triangles, and calls `computeVertexNormals`. HUD toggles indexed drawing, normal computation, wireframe, grid resolution, and vertex/normal false-colour modes. The parametric preset can animate live position updates with recomputed normals.
+
 ## Commands
 
 ```sh
@@ -109,5 +114,6 @@ native/
         ├── 09-orbit-controls.js
         ├── 10-raycasting.js
         ├── 11-keyframes.js
-        └── 12-instanced-mesh.js
+        ├── 12-instanced-mesh.js
+        └── 13-buffer-geometry.js
 ```

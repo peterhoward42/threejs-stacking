@@ -11,6 +11,7 @@ const STEP_MODULES = {
   10: () => import('./steps/10-raycasting.js'),
   11: () => import('./steps/11-keyframes.js'),
   12: () => import('./steps/12-instanced-mesh.js'),
+  13: () => import('./steps/13-buffer-geometry.js'),
 };
 
 export function resolveStep() {
