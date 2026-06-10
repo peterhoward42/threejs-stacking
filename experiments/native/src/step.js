@@ -12,6 +12,7 @@ const STEP_MODULES = {
   11: () => import('./steps/11-keyframes.js'),
   12: () => import('./steps/12-instanced-mesh.js'),
   13: () => import('./steps/13-buffer-geometry.js'),
+  14: () => import('./steps/14-shader-material.js'),
 };
 
 export function resolveStep() {
