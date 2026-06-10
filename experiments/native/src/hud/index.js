@@ -11,6 +11,7 @@ const HUD_LOADERS = {
   7: () => import('./Hud07Textures.svelte'),
   8: () => import('./Hud08GltfLoading.svelte'),
   9: () => import('./Hud09OrbitControls.svelte'),
+  10: () => import('./Hud10Raycasting.svelte'),
 };
 
 const OVERLAY_LOADERS = {
