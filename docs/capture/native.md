@@ -118,6 +118,48 @@
 - It's called a Buffer because it's just a container you pump full of vertex
   coordinates.
 
+## Dynamic Shading (experiment 14)
+
+- You can give a material a "uniform" to wear.
+- Like repeated striped sections
+- Then give it timed transitions for colour, UV normal, and wave translations in
+  the parametric space of the surface.
+
+
+## Render post processor pass (experiment 15)
+
+- Not sure what the point of this one is
+- You can intervene after it has rendered with programmatic effects
+- Like colour tuning and bloom effect
+
+## Lighting using precomputed image reflections (experiment 16)
+
+- Consider that a shiny sphere often shows reflections of distant light sources
+  like windows...
+- This is a hack simulation of that full optical phenomenenom
+- You provide an image to represent the reflection and specify in which direction
+  it "shines" from.
+- Quite realistic
+
+
+## Auxilliary / additional cameras (experiment 17)
+
+- Like the security guard keeping an eye of multiple CCTV cameras
+- Except that they are all looking at the same scene
+- But from different view points
+- For example a psuedo live reflection in the floor or a mirror-monitor on the
+  wall
+
+
+## Lines, points and edges (experiment 18)
+
+- You can put fine 3d lines into the scene
+- You can also switch on the rendering for otherwise hidden artefacts on
+  meshes. Like the lines that form the facet edges. Or the point cloud extracted
+  from all of those edges.
+
+
+
 ## Questions arising
 
 - Haven't seen any text in the scene yet?

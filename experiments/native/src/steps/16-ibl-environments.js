@@ -130,37 +130,34 @@ function createNeonCubeTexture() {
   return cube;
 }
 
-function createLabelTexture(text, subtext) {
+function createRoughnessLabelTexture(text) {
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = subtext ? 128 : 96;
+  canvas.width = 96;
+  canvas.height = 48;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = 'rgba(12, 12, 18, 0.88)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#d0d0e0';
-  ctx.font = '600 30px system-ui, sans-serif';
+  ctx.fillStyle = '#c8c8d8';
+  ctx.font = '600 26px system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, canvas.width / 2, subtext ? canvas.height * 0.38 : canvas.height / 2);
-  if (subtext) {
-    ctx.fillStyle = '#9a9aad';
-    ctx.font = '400 22px system-ui, sans-serif';
-    ctx.fillText(subtext, canvas.width / 2, canvas.height * 0.72);
-  }
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
 
-function addLabel(scene, text, subtext, x, y, z) {
-  const map = createLabelTexture(text, subtext);
+function addRoughnessLabel(scene, text, x, y, z) {
+  const map = createRoughnessLabelTexture(text);
   const sprite = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map, transparent: true, depthTest: false }),
+    new THREE.SpriteMaterial({
+      map,
+      transparent: true,
+      depthTest: true,
+      depthWrite: false,
+    }),
   );
   const aspect = map.image.width / map.image.height;
-  sprite.scale.set(2.4 * aspect, 2.4, 1);
+  sprite.scale.set(0.34 * aspect, 0.34, 1);
   sprite.position.set(x, y, z);
-  sprite.renderOrder = 10;
   scene.add(sprite);
   return { sprite, map };
 }
@@ -172,7 +169,7 @@ function buildComparisonGrid(scene, sphereRows) {
 
   ROUGHNESS_SAMPLES.forEach((roughness, col) => {
     const x = startX + col * SPHERE_GAP;
-    addLabel(scene, roughness === 0 ? '0' : roughness.toFixed(2), null, x, 2.55, -1.35);
+    addRoughnessLabel(scene, roughness === 0 ? '0' : roughness.toFixed(2), x, 1.95, 0);
   });
 
   const rowDefs = [
@@ -201,7 +198,6 @@ function buildComparisonGrid(scene, sphereRows) {
       meshes.push(mesh);
     });
     sphereRows.push({ ...row, meshes });
-    addLabel(scene, row.label, row.sub, -span / 2 - 1.55, row.y, 0);
   });
 }
 
@@ -231,9 +227,10 @@ export function mount(container, { onHudUpdate } = {}) {
   floor.position.y = -0.55;
   floor.receiveShadow = true;
   scene.add(floor);
+  scene.add(new THREE.GridHelper(12, 24, 0x3a3a4a, 0x222230));
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 80);
-  camera.position.set(0, 2.2, 7.8);
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 80);
+  camera.position.set(0, 1.75, 10.2);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -250,11 +247,11 @@ export function mount(container, { onHudUpdate } = {}) {
   const rgbeLoader = new RGBELoader();
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.9, 0);
+  controls.target.set(0, 0.75, 0);
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
-  controls.minDistance = 4;
-  controls.maxDistance = 16;
+  controls.minDistance = 5;
+  controls.maxDistance = 18;
   controls.update();
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 0);
@@ -289,9 +286,12 @@ export function mount(container, { onHudUpdate } = {}) {
   };
 
   function applyLightingBalance() {
-    if (iblEnabled) {
+    if (iblEnabled && envBundle?.pmrem) {
       keyLight.intensity = 0.18;
       fillLight.intensity = 0.08;
+    } else if (iblEnabled) {
+      keyLight.intensity = 0.9;
+      fillLight.intensity = 0.3;
     } else {
       keyLight.intensity = 1.15;
       fillLight.intensity = 0.35;
@@ -456,9 +456,10 @@ export function mount(container, { onHudUpdate } = {}) {
     renderer.render(scene, camera);
     pushHud();
   }
-  tick();
 
-  loadEnvironment(activePresetId);
+  loadEnvironment(activePresetId).then(() => {
+    if (!frameId) tick();
+  });
 
   return {
     setPreset(id) {
