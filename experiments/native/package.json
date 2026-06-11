@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:site": "vite build --base=/native/ --outDir=../../dist/native",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/native", "destination": "/native/index.html" },
+    { "source": "/native/(.*)", "destination": "/native/index.html" },
+    { "source": "/((?!native/).*)", "destination": "/index.html" }
+  ]
+}

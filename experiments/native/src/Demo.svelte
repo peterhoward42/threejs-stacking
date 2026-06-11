@@ -3,6 +3,7 @@
   import { loadStep } from './step.js';
   import { metaForStep, notesForStep } from './curriculum.js';
   import { loadHud, loadOverlay } from './hud/index.js';
+  import { homeUrl } from './nav.js';
   import './hud/hud.css';
 
   /** @type {{ step: number }} */
@@ -24,7 +25,7 @@
   });
 
   function goToMenu() {
-    location.assign('/');
+    location.assign(homeUrl());
   }
 
   onMount(() => {

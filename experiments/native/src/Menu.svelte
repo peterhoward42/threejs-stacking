@@ -1,11 +1,12 @@
 <script>
   import { CURRICULUM, NOTES_EXCERPT_COUNT, notesExcerptForStep, hasMoreNotes, notesForStep } from './curriculum.js';
+  import { demoUrl } from './nav.js';
 
   /** @type {Record<number, boolean>} */
   let expanded = {};
 
   function openDemo(step) {
-    location.assign(`/?step=${step}`);
+    location.assign(demoUrl(step));
   }
 
   function toggleNotes(step) {

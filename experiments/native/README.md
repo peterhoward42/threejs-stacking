@@ -6,7 +6,7 @@ Bare Three.js with a Svelte UI. Numbered curriculum steps live in `src/steps/` �
 
 ```sh
 make install          # once
-make dev              # opens demo chooser at /
+make dev              # opens demo chooser at / (local dev)
 ```
 
 The menu lists all 25 topics with lede text and concept notes. Click **Open demo** on a card to mount that step.
@@ -15,15 +15,20 @@ Deep links still work: `http://localhost:5173/?step=10` opens demo 10 directly. 
 
 Only one step mounts at a time; switching demos reloads the page with a different `?step=` query.
 
+On the deployed site, native lives under `/native/` (see repo root `make build`). Local dev keeps `/` as the experiment root.
+
 ## Copy and navigation
 
 All UI copy (titles, ledes, concept notes) lives in `src/curriculum.js`. Step modules re-export `meta` from there so headers stay in sync with the chooser.
 
 ```
-/
-  → menu (no WebGL)
-/?step=N
-  → demo N (canvas + HUD)
+Local dev:
+  /           → menu (no WebGL)
+  /?step=N    → demo N (canvas + HUD)
+
+Production (via site portal):
+  /native/           → menu
+  /native/?step=N    → demo N
 ```
 
 ## Step 1 — Scene graph and transforms

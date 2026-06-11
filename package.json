@@ -1,0 +1,24 @@
+{
+  "name": "threejs-stacking",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "experiments/native"
+  ],
+  "scripts": {
+    "dev": "concurrently -n portal,native -c blue,green \"vite --port 5173 --strictPort\" \"npm run dev:native:proxied\"",
+    "dev:portal": "vite",
+    "dev:native": "npm run dev -w native",
+    "dev:native:proxied": "VITE_EXPERIMENT_BASE=/native/ npm run dev -w native -- --port 5176 --strictPort",
+    "build:native": "npm run build:site -w native",
+    "build:portal": "vite build",
+    "build": "rm -rf dist && npm run build:portal && npm run build:native",
+    "preview": "vite preview --port 4173"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.1.0",
+    "concurrently": "^9.2.0",
+    "svelte": "^5.34.0",
+    "vite": "^6.3.5"
+  }
+}

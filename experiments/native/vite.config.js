@@ -7,6 +7,7 @@ const experimentRoot = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(experimentRoot, '../..');
 
 export default defineConfig({
+  base: process.env.VITE_EXPERIMENT_BASE ?? '/',
   plugins: [svelte()],
   server: {
     fs: {

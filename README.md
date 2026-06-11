@@ -17,14 +17,37 @@ Each experiment owns its own `Makefile`, dependencies, and dev server. UI is Sve
 
 ## Getting started
 
-Pick an experiment and work from its directory:
+**Site portal** (lists experiments — same layout as production):
+
+```sh
+make install
+make dev          # portal at /, native proxied at /native/
+```
+
+**Single experiment** (native curriculum, local dev at `/`):
 
 ```sh
 cd experiments/native
-make help
+make dev          # http://localhost:5173/
 ```
 
-Add new experiments as sibling folders under `experiments/`, following the same shape as `native/`.
+Production build from the repo root:
+
+```sh
+make build        # dist/ — portal at /, native at /native/
+```
+
+## Deploy (Vercel)
+
+Import the GitHub repo as a Vite project. `vercel.json` sets the build command and SPA rewrites. No environment variables or custom domain required.
+
+| URL | Content |
+|-----|---------|
+| `/` | Experiment index |
+| `/native/` | Native curriculum menu |
+| `/native/?step=N` | Native demo N |
+
+Add new experiments as sibling folders under `experiments/`, register them in `common/experiments.js`, and wire a `build:site` script into the root `npm run build`.
 
 ## Shared code
 
