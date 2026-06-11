@@ -158,7 +158,23 @@
   meshes. Like the lines that form the facet edges. Or the point cloud extracted
   from all of those edges.
 
+## Morph what you see at shader stage (experiment 19)
 
+- You can introduce virtual systematic mutations to the geometry in the shader
+  stage. 
+- In other words the mesh geometry does not change
+- But the shader behaves as if it has
+- The example shows a spere that you can progressively squash into a shape like a
+  rugby ball - except your're not really squqshing the geometry.
+
+
+## Level of detail (LOD) and Culling (experiment 20)
+
+- LOD is a way to optimise computational cost for needless rendering, and to
+  avoid showing details that too fine to engage with.
+- You can provide each node in the scene graph hierarchy with finer or coarser
+  meshes and assign distance-to-camera bindings for which to use
+- Nb. You often have an empty mesh variant for very large distances
 
 ## Questions arising
 
@@ -166,4 +182,6 @@
 - Need to know more about raycasting chain in the context of a hierarchical scene
   model?
 - Not yet seen how you get meshes in from outside?
+- Who makes the LOD mesh variants?
 - Are there 3rd party packages for generating BufferGeometries?
+
