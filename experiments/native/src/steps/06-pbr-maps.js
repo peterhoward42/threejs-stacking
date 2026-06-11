@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 6,
-  title: 'PBR maps on MeshStandardMaterial',
-  description:
-    'MeshStandardMaterial map slots on a subdivided box: albedo, normal, roughness, metalness, AO, and subtle displacement. Toggle each map and switch between separate textures vs one packed ORM image (R=AO, G=roughness, B=metalness).',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(6);
+
 
 const MAP_SLOTS = [
   {

@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 2,
-  title: 'Cameras and projection',
-  description:
-    'The same scene through PerspectiveCamera (left) and OrthographicCamera (right). Adjust fov, near/far, and ortho frustum size to see how projection changes depth cues.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(2);
+
 
 const BOX_COLORS = [0xf5c542, 0x42c9f5, 0xf542c9, 0x7af542, 0xc97af5];
 

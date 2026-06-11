@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { WebGPURenderer } from 'three/webgpu';
 
-export const meta = {
-  step: 25,
-  title: 'WebGPU renderer path',
-  description:
-    'Same scene-graph arm as step 1, rendered through `WebGPURenderer`: async `init()`, `navigator.gpu` probing, and automatic fallback to a WebGL2 backend when WebGPU is unavailable.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(25);
+
 
 const RENDERER_MODES = [
   {

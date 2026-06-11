@@ -1,29 +1,30 @@
 # native
 
-Bare Three.js with a Svelte UI. Numbered curriculum steps live in `src/steps/` — each is an isolated demo with its own launch path.
+Bare Three.js with a Svelte UI. Numbered curriculum steps live in `src/steps/` — each is an isolated demo with its own scene and HUD.
 
-## Launch a step
+## Start the lab
 
 ```sh
 make install          # once
-make dev STEP=1       # scene graph and transforms
-make dev STEP=2       # cameras and projection
-make dev STEP=3       # built-in geometry and BufferGeometry anatomy
-make dev STEP=4       # material comparison lab
-make dev STEP=5       # light types and real-time shadows
-make dev STEP=6       # PBR maps on MeshStandardMaterial
-make dev STEP=7       # textures and sampling behaviour
-make dev STEP=8       # asset loading with GLTFLoader
-make dev STEP=9       # OrbitControls and the render loop
-make dev STEP=10      # raycasting and mesh picking
-make dev STEP=11      # keyframe animation with AnimationMixer
-make dev STEP=12      # InstancedMesh at scale
-make dev STEP=13      # procedural custom BufferGeometry
+make dev              # opens demo chooser at /
 ```
 
-Or open the dev server with a query param: `http://localhost:5173/?step=2`
+The menu lists all 25 topics with lede text and concept notes. Click **Open demo** on a card to mount that step.
 
-Only one step mounts at a time; switching steps reloads the page with a different `?step=` or `VITE_STEP`.
+Deep links still work: `http://localhost:5173/?step=10` opens demo 10 directly. Use **← All demos** in the header to return to the menu.
+
+Only one step mounts at a time; switching demos reloads the page with a different `?step=` query.
+
+## Copy and navigation
+
+All UI copy (titles, ledes, concept notes) lives in `src/curriculum.js`. Step modules re-export `meta` from there so headers stay in sync with the chooser.
+
+```
+/
+  → menu (no WebGL)
+/?step=N
+  → demo N (canvas + HUD)
+```
 
 ## Step 1 — Scene graph and transforms
 
@@ -81,14 +82,14 @@ Three geometry builders from scratch: a parametric sine surface, a terrain heigh
 
 ```sh
 make install
-make dev STEP=1
+make dev
 make build
 make preview
 ```
 
 ## Layout
 
-The shell is locked to the browser viewport (`100dvh`, no page scroll). The canvas fills the remaining space beside the HUD; call `renderer.setSize(w, h, false)` and let CSS size the canvas element (see `app.css`).
+The shell is locked to the browser viewport (`100dvh`, no page scroll) in demo mode. The menu view scrolls normally. The canvas fills the remaining space beside the HUD; call `renderer.setSize(w, h, false)` and let CSS size the canvas element (see `app.css`).
 
 ```
 native/
@@ -100,20 +101,13 @@ native/
 └── src/
     ├── main.js
     ├── app.css
+    ├── curriculum.js     # titles, ledes, concept notes
     ├── step.js           # step resolution and lazy loading
-    ├── App.svelte        # shell + HUD
+    ├── App.svelte        # menu vs demo router
+    ├── Menu.svelte       # scrollable demo chooser
+    ├── Demo.svelte       # canvas + HUD shell
     └── steps/
         ├── 01-scene-graph.js
-        ├── 02-cameras.js
-        ├── 03-geometry.js
-        ├── 04-materials.js
-        ├── 05-lights.js
-        ├── 06-pbr-maps.js
-        ├── 07-textures.js
-        ├── 08-gltf-loading.js
-        ├── 09-orbit-controls.js
-        ├── 10-raycasting.js
-        ├── 11-keyframes.js
-        ├── 12-instanced-mesh.js
-        └── 13-buffer-geometry.js
+        …
+        └── 25-webgpu-renderer.js
 ```

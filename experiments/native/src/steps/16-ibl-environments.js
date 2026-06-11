@@ -2,12 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-export const meta = {
-  step: 16,
-  title: 'Image-based lighting and environments',
-  description:
-    '`PMREMGenerator` pre-filters HDRIs and cube maps into `scene.environment`. Toggle IBL, swap `CubeTexture` vs `RGBELoader` sources, and compare metal/rough spheres with and without environment reflections.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(16);
+
 
 const HDR_URL = new URL('../../../../common/assets/venice_sunset_1k.hdr', import.meta.url).href;
 

@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const meta = {
-  step: 8,
-  title: 'Asset loading with GLTFLoader',
-  description:
-    'Load a `.glb` from `common/assets/`, traverse meshes and materials, swap a material live, and drive embedded clips with `AnimationMixer`. Shows loading progress and error handling.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(8);
+
 
 const MODEL_URL = new URL('../../../../common/assets/brain-stem.glb', import.meta.url).href;
 const BAD_MODEL_URL = new URL('../../../../common/assets/missing-model.glb', import.meta.url).href;

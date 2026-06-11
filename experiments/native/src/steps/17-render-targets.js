@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 17,
-  title: 'Render targets and offscreen rendering',
-  description:
-    '`WebGLRenderTarget` feeds from secondary cameras: a security monitor in-scene, a floor mirror, and a corner mini-map composited with an orthographic fullscreen quad.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(17);
+
 
 const DISPLAY_MODES = [
   {

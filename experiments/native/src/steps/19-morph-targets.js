@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 19,
-  title: 'Morph targets',
-  description:
-    '`BufferGeometry.morphAttributes.position` (and optional normals) on one mesh; blend shapes via `morphTargetInfluences` or `NumberKeyframeTrack` clips.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(19);
+
 
 const MORPH_TARGETS = [
   {

@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 13,
-  title: 'Procedural custom BufferGeometry',
-  description:
-    'Build geometry from scratch with `Float32Array` attributes, `BufferAttribute`, optional indexed drawing, and `computeVertexNormals`. Parametric surface, terrain heightfield, and icosahedron from first principles.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(13);
+
 
 const PRESETS = [
   {

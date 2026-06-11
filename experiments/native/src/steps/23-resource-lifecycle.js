@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 23,
-  title: 'Resource lifecycle and disposal',
-  description:
-    'Swap disposable demo scenes with or without `dispose()` on geometries, materials, and textures. Read `renderer.info.memory` and render lists; mirrors the hot-reload teardown in `App.svelte`.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(23);
+
 
 const SCENE_VARIANTS = [
   {

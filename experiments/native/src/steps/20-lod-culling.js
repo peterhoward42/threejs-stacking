@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 20,
-  title: 'Level of detail and culling',
-  description:
-    '`LOD` switches child meshes by camera distance; `Box3Helper` shows bounds. Compare default `frustumCulled` with forced off-screen draws.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(20);
+
 
 const LOD_THRESHOLDS = [
   { id: 'high', label: 'High (icosahedron ×3)', distance: 0, color: 0x42c9f5 },

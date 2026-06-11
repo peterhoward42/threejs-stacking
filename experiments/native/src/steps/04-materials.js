@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 4,
-  title: 'Material comparison lab',
-  description:
-    'The same TorusKnot mesh with seven material types in a grid. Toggle wireframe and compare how each responds to scene lighting.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(4);
+
 
 const BASE_COLOR = 0xf5c542;
 const GRID_COLS = 4;

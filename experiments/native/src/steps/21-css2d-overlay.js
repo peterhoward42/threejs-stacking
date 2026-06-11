@@ -2,12 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-export const meta = {
-  step: 21,
-  title: 'CSS2DRenderer overlay',
-  description:
-    'HTML labels anchored to objects via `CSS2DObject`, compared with canvas `Sprite` text. Toggle depth testing and an occluder to see DOM vs WebGL trade-offs.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(21);
+
 
 const MARKERS = [
   { id: 'alpha', label: 'Alpha node', detail: 'front row', color: 0x42c9f5, position: [-4.5, 0.55, 2.2] },

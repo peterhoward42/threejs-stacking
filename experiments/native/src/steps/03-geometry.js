@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 3,
-  title: 'Built-in geometry and BufferGeometry anatomy',
-  description:
-    'Gallery of primitive geometries with one material each. Select a mesh to inspect attributes (position, normal, uv, index) and colour vertices or normals to reveal structure.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(3);
+
 
 const PRIMITIVES = [
   {

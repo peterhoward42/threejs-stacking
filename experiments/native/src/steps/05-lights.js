@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 
-export const meta = {
-  step: 5,
-  title: 'Light types and real-time shadows',
-  description:
-    'Switch between Ambient, Hemisphere, Directional, Point, Spot, and RectArea lights on the same scene. Shadow maps on the ground plane; tune map size, bias, and directional shadow frustum.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(5);
+
 
 const LIGHT_SPECS = [
   {

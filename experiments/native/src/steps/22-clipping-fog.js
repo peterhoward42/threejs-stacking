@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 22,
-  title: 'Clipping, fog, and scene atmosphere',
-  description:
-    '`renderer.clippingPlanes` and per-material `clipIntersection` for sectional views. Linear `Fog` and exponential `FogExp2` for depth cueing without post-processing.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(22);
+
 
 const FOG_MODES = [
   { id: 'none', label: 'None' },

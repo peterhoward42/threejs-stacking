@@ -2,12 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const meta = {
-  step: 11,
-  title: 'Keyframe animation with AnimationMixer',
-  description:
-    'Procedural `AnimationClip` + `KeyframeTrack` on transforms and morph influences; loaded glTF clips via `AnimationMixer` and `AnimationAction` with loop modes and crossfade.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(11);
+
 
 const MODEL_URL = new URL('../../../../common/assets/brain-stem.glb', import.meta.url).href;
 

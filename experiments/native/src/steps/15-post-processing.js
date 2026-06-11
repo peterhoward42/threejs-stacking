@@ -10,12 +10,10 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { BrightnessContrastShader } from 'three/addons/shaders/BrightnessContrastShader.js';
 import { HueSaturationShader } from 'three/addons/shaders/HueSaturationShader.js';
 
-export const meta = {
-  step: 15,
-  title: 'Post-processing with EffectComposer',
-  description:
-    'Multi-pass pipeline: `RenderPass` → optional `OutlinePass` / `UnrealBloomPass` / color grading → `OutputPass` → `FXAAPass`. Toggle passes live and compare against a direct `renderer.render`.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(15);
+
 
 const PASS_CATALOG = [
   {

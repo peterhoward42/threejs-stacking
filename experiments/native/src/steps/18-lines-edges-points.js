@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 18,
-  title: 'Lines, edges, and points',
-  description:
-    'Compare `Line`, `LineSegments`, and `LineLoop` draw modes; `EdgesGeometry` crease overlays on filled meshes; `Points` with `PointsMaterial` size attenuation.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(18);
+
 
 const LINE_MODES = [
   {

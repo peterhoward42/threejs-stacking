@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 24,
-  title: 'Multiple viewports and scissor rendering',
-  description:
-    'One WebGLRenderer, many regions: `setViewport`, `setScissor`, and `setScissorTest` drive quad editor views, picture-in-picture, or a single full-screen pass with different cameras.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(24);
+
 
 const LAYOUTS = [
   {

@@ -3,25 +3,14 @@
 *  auto gen native:2
 *  auto gen native:3
 
-o  create set of feature demo pages
-	*  create them
-	*  commit them
-	o  read / absorb and fix them
-		o  write summary as go
-		o  
-	o  write summary with links
+*  create set of feature demo pages
+*  put ui in front of the native demos
+o  prep for deployment architecture to share
+	o  how cater for future different entry points (i.e. not native)
+o  put in spa svelte deployment capability
+o  deploy
+o  share with Ehsan with cover note
 
-o  put a demo ui in front in place of numbered step urls
-
-o  take stock of the meta perimter, what we need to inject from outside,
-   and things we can exploit
-
-o  deploy it as a demo
-o  update ehsan
-o  exploit as a post
-
-
-Read docs/planning/native.md then implement native:2 only.
 
 
 o  Questions to remember

@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 1,
-  title: 'Scene graph and transforms',
-  description:
-    'Nested groups rotate at different rates. Local transforms are relative to the parent; world values compound down the chain.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(1);
+
 
 const JOINT_COLORS = {
   root: 0xf5c542,

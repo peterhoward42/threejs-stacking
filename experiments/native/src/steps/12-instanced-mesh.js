@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 12,
-  title: 'InstancedMesh at scale',
-  description:
-    'Thousands of identical meshes via `InstancedMesh` with per-instance `setMatrixAt` / `setColorAt`. Toggle naive cloning to contrast draw calls and frame time.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(12);
+
 
 const PLACEMENT_MODES = [
   { id: 'grid', label: 'Grid on plane' },

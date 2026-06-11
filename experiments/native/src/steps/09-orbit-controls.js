@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 9,
-  title: 'OrbitControls and the render loop',
-  description:
-    '`requestAnimationFrame` with `Clock` delta drives simulation; `OrbitControls` handles orbit, zoom, and pan with damping. Resize updates camera and renderer — the pattern reused in later steps.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(9);
+
 
 const RING_COLORS = [0xf5c542, 0x42c9f5, 0xf542c9, 0x7af542, 0xc97af5, 0xff8844];
 

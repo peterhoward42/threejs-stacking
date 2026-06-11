@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 14,
-  title: 'ShaderMaterial essentials',
-  description:
-    'Custom GLSL via `ShaderMaterial`: `time` and `color` uniforms, UV/normal varyings from attributes, procedural colouring and wave displacement — using Three.js `#include` shader chunks, not `onBeforeCompile`.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(14);
+
 
 const PRESETS = [
   {

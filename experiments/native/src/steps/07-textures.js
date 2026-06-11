@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 
-export const meta = {
-  step: 7,
-  title: 'Textures and sampling behaviour',
-  description:
-    'Image vs canvas `Texture` sources, wrap/repeat/offset/rotation, min/mag filters, anisotropy, and colorSpace (sRGB albedo vs linear data). Includes a live animated canvas texture.',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(7);
+
 
 const WRAP_MODES = [
   { id: 'clamp', label: 'ClampToEdge', value: THREE.ClampToEdgeWrapping },

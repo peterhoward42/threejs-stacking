@@ -30,16 +30,10 @@ export function resolveStep() {
   const fromQuery = new URLSearchParams(window.location.search).get('step');
   if (fromQuery != null && fromQuery !== '') {
     const n = Number(fromQuery);
-    if (!Number.isNaN(n)) return n;
+    if (!Number.isNaN(n) && STEP_MODULES[n]) return n;
   }
 
-  const fromEnv = import.meta.env.VITE_STEP;
-  if (fromEnv != null && fromEnv !== '') {
-    const n = Number(fromEnv);
-    if (!Number.isNaN(n)) return n;
-  }
-
-  return 1;
+  return null;
 }
 
 export async function loadStep(step) {

@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export const meta = {
-  step: 10,
-  title: 'Raycasting and mesh picking',
-  description:
-    '`Raycaster` from pointer NDC: hover highlight, click selection, and face index readout. Compare hits on individual meshes vs `InstancedMesh` (`instanceId`).',
-};
+import { metaForStep } from '../curriculum.js';
+
+export const meta = metaForStep(10);
+
 
 const MESH_SPECS = [
   { id: 'box', label: 'Box', color: 0xf5c542, geometry: () => new THREE.BoxGeometry(0.9, 0.9, 0.9) },
