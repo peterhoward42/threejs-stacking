@@ -5,9 +5,13 @@
 
 o  create set of feature demo pages
 	*  create them
-	o  commit them
-	o  fix them
+	*  commit them
+	o  read / absorb and fix them
+		o  write summary as go
+		o  
 	o  write summary with links
+
+o  put a demo ui in front in place of numbered step urls
 
 o  take stock of the meta perimter, what we need to inject from outside,
    and things we can exploit

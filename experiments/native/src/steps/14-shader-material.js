@@ -15,7 +15,17 @@ const PRESETS = [
     geometry: 'torusKnot',
     color: 0x42c9f5,
     hint: 'Fragment shader mixes ripples and a checker from `vUv`; vertex shader passes UVs through `<uv_vertex>`.',
-    chunks: ['common', 'uv_vertex', 'beginnormal_vertex', 'defaultnormal_vertex', 'normal_vertex', 'begin_vertex', 'project_vertex'],
+    chunks: [
+      'common',
+      'uv_pars_vertex',
+      'normal_pars_vertex',
+      'uv_vertex',
+      'beginnormal_vertex',
+      'defaultnormal_vertex',
+      'normal_vertex',
+      'begin_vertex',
+      'project_vertex',
+    ],
     uniforms: ['time', 'uColor', 'uStripeScale'],
   },
   {
@@ -24,7 +34,17 @@ const PRESETS = [
     geometry: 'sphere',
     color: 0xffffff,
     hint: '`<normal_vertex>` writes `vNormal`; fragment maps world-space normal to RGB for a quick normal debug view.',
-    chunks: ['common', 'uv_vertex', 'beginnormal_vertex', 'defaultnormal_vertex', 'normal_vertex', 'begin_vertex', 'project_vertex'],
+    chunks: [
+      'common',
+      'uv_pars_vertex',
+      'normal_pars_vertex',
+      'uv_vertex',
+      'beginnormal_vertex',
+      'defaultnormal_vertex',
+      'normal_vertex',
+      'begin_vertex',
+      'project_vertex',
+    ],
     uniforms: ['time', 'uColor', 'uBlend'],
   },
   {
@@ -33,27 +53,41 @@ const PRESETS = [
     geometry: 'plane',
     color: 0xf5a742,
     hint: 'Vertex shader displaces along `normal` after `<begin_vertex>`; `time` and `uAmplitude` drive the ripple.',
-    chunks: ['common', 'uv_vertex', 'beginnormal_vertex', 'defaultnormal_vertex', 'normal_vertex', 'begin_vertex', 'project_vertex'],
+    chunks: [
+      'common',
+      'uv_pars_vertex',
+      'normal_pars_vertex',
+      'uv_vertex',
+      'beginnormal_vertex',
+      'defaultnormal_vertex',
+      'normal_vertex',
+      'begin_vertex',
+      'project_vertex',
+    ],
     uniforms: ['time', 'uColor', 'uAmplitude', 'uFrequency'],
   },
 ];
 
-const VERTEX_PREAMBLE = /* glsl */ `
-varying vec2 vUv;
-varying vec3 vNormal;
+const VERTEX_PARS = /* glsl */ `
+#include <common>
+#include <uv_pars_vertex>
+#include <normal_pars_vertex>
 `;
 
-const VERTEX_PROCEDURAL = /* glsl */ `
-${VERTEX_PREAMBLE}
-
-void main() {
-  #include <common>
+const VERTEX_BODY = /* glsl */ `
   #include <uv_vertex>
   #include <beginnormal_vertex>
   #include <defaultnormal_vertex>
   #include <normal_vertex>
   #include <begin_vertex>
   #include <project_vertex>
+`;
+
+const VERTEX_PROCEDURAL = /* glsl */ `
+${VERTEX_PARS}
+
+void main() {
+${VERTEX_BODY}
 }
 `;
 
@@ -93,13 +127,13 @@ void main() {
 `;
 
 const VERTEX_WAVE = /* glsl */ `
+${VERTEX_PARS}
+
 uniform float time;
 uniform float uAmplitude;
 uniform float uFrequency;
-${VERTEX_PREAMBLE}
 
 void main() {
-  #include <common>
   #include <uv_vertex>
   #include <beginnormal_vertex>
   #include <defaultnormal_vertex>
