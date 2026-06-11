@@ -17,6 +17,13 @@ const STEP_MODULES = {
   16: () => import('./steps/16-ibl-environments.js'),
   17: () => import('./steps/17-render-targets.js'),
   18: () => import('./steps/18-lines-edges-points.js'),
+  19: () => import('./steps/19-morph-targets.js'),
+  20: () => import('./steps/20-lod-culling.js'),
+  21: () => import('./steps/21-css2d-overlay.js'),
+  22: () => import('./steps/22-clipping-fog.js'),
+  23: () => import('./steps/23-resource-lifecycle.js'),
+  24: () => import('./steps/24-multi-viewports.js'),
+  25: () => import('./steps/25-webgpu-renderer.js'),
 };
 
 export function resolveStep() {

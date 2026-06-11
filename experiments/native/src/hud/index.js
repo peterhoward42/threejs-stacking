@@ -20,6 +20,13 @@ const HUD_LOADERS = {
   16: () => import('./Hud16IblEnvironments.svelte'),
   17: () => import('./Hud17RenderTargets.svelte'),
   18: () => import('./Hud18LinesEdgesPoints.svelte'),
+  19: () => import('./Hud19MorphTargets.svelte'),
+  20: () => import('./Hud20LodCulling.svelte'),
+  21: () => import('./Hud21Css2dOverlay.svelte'),
+  22: () => import('./Hud22ClippingFog.svelte'),
+  23: () => import('./Hud23ResourceLifecycle.svelte'),
+  24: () => import('./Hud24MultiViewports.svelte'),
+  25: () => import('./Hud25WebgpuRenderer.svelte'),
 };
 
 const OVERLAY_LOADERS = {
