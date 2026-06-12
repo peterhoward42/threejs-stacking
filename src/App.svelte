@@ -8,6 +8,14 @@
     <p class="lede">
       Experiments with Three.js and third-party orchestration layers. Pick a stack to explore.
     </p>
+    <p class="source">
+      Source code:
+      <a
+        href="https://github.com/peterhoward42/threejs-stacking"
+        target="_blank"
+        rel="noopener noreferrer"
+      >github.com/peterhoward42/threejs-stacking</a>
+    </p>
   </header>
 
   <div class="portal-list">
@@ -49,6 +57,22 @@
     color: #9a9aad;
     line-height: 1.45;
     max-width: 42rem;
+  }
+
+  .source {
+    margin: 0.5rem 0 0;
+    font-size: 0.75rem;
+    color: #7a7a8d;
+    line-height: 1.45;
+  }
+
+  .source a {
+    color: #7a9ac8;
+    text-decoration: none;
+  }
+
+  .source a:hover {
+    text-decoration: underline;
   }
 
   .portal-list {
