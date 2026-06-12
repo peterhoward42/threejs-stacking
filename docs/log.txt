@@ -7,7 +7,7 @@
 *  put ui in front of the native demos
 *  prep for deployment architecture to share
 *  put in spa svelte deployment capability
-o  add source url to home
+*  add source url to home
 o  deploy
 o  share with Ehsan with cover note
 
