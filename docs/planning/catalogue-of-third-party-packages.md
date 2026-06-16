@@ -268,7 +268,75 @@ Conceptual parallels only — native step **code** does not run on xeokit. The m
 
 A 3D geospatial and large-scale scene engine. While often associated with globe visualisation, its more relevant capabilities for industrial applications are hierarchical streaming, large-scene management, and level-of-detail control through technologies such as 3D Tiles.
 
+### When it applies
 
+This package is intended when a Three.js app can be characterised as having these properties, required features, or constraints: the scene is anchored to real-world geography (WGS84 ellipsoid, ECEF or lon/lat/height coordinates) rather than an arbitrary unit cube; datasets are too large to load as a single GLTF and require hierarchical streaming with view-dependent level of detail; the primary content formats are **3D Tiles** (OGC community standard, originated by Cesium), terrain and imagery pyramids, point clouds, photogrammetry tilesets, or time-dynamic geospatial data (CZML, GeoJSON draped on terrain); users need globe- or map-scale navigation (orbit a planet, fly to a site, clamp models to terrain); and the goal is site context, infrastructure visualisation, or digital-twin geospatial framing rather than a general-purpose mesh playground. It also fits when you want the reference implementation of 3D Tiles traversal and geospatial rendering in the browser without building ellipsoid math, tile streaming, and LOD selection on raw Three.js.
+
+### What it owns vs what Three.js still owns
+
+**It is not a Three.js layer.** CesiumJS ships its own WebGL renderer, scene graph (`Primitive`, `Entity`, `3D Tileset`), globe (`Ellipsoid`, `Globe`, terrain and imagery providers), camera controllers, and render loop — none of which are `THREE.*` types. For this catalogue, CesiumJS is an **alternative geospatial engine**, not something that sits above the native Three.js experiments the way React Three Fiber does. Three.js *concepts* (frustum culling, materials, glTF payloads inside 3D Tiles) transfer; Three.js *code* from `experiments/native` does not drop in.
+
+CesiumJS owns: WGS84 globe rendering and geodetic coordinate transforms; streaming loaders and traversal for 3D Tiles (including implicit tiling, metadata, overlays, and point-cloud or mesh tile types); terrain and imagery tiling (quantized-mesh, raster pyramids, WMS/WMTS/URL templates); the `Viewer` application shell (timeline, animation, base-layer picker, geocoder widgets — many optional); entity-based scene authoring (models, polylines, corridors, labels, billboards tied to geographic positions); atmosphere, sun position, and globe-scale lighting; and time-dynamic visualisation (CZML, `SampledPositionProperty`, clock-driven updates). Three.js still owns nothing in the CesiumJS rendering path. If you stay on Three.js and only need 3D Tiles, sibling libraries (`3DTilesRendererJS`, `three-loader-3dtiles`, iTowns) load the same tile format into a `THREE.Scene` instead — a different integration choice, not a subset of CesiumJS.
+
+Surrounding UI (Svelte HUD, forms, routing) remains ordinary app code; Cesium widgets are optional and often disabled in embedded viewers.
+
+### Problems it solves as a Three.js partner
+
+Without it you would need to implement: double-precision or globe-aware coordinate handling so large sites do not jitter at planetary scale; hierarchical 3D Tiles loading, refinement, and memory budgeting; terrain and imagery draping with correct ellipsoid intersection; view-dependent LOD selection across heterogeneous tile types (mesh, point cloud, Gaussian splats); geospatial camera controllers (tilt, collision with terrain, fly-to); and time-synchronised animation of entities along geographic paths. That work tends to be challenging or undesirable because: geospatial correctness requires domain expertise in datums, projections, and tiling schemes; streaming performance for city- or planet-scale data is a sustained engineering effort; 3D Tiles is a moving specification with many extensions; and reimplementing Cesium’s traversal on raw Three.js duplicates ecosystem libraries that already exist for partial coverage.
+
+### What you lose by adopting it
+
+The scene becomes mediated by Cesium’s `Viewer`, `Scene`, `Entity`, and `Cesium3DTileset` APIs: you cannot treat the canvas as a free-form Three.js sandbox. Arbitrary `.glb` assets from `common/assets/` load through Cesium’s model primitives or as 3D Tiles, not via `GLTFLoader` + `scene.add` idioms from the native curriculum. Debugging shifts from “inspect `scene.children`” to “trace which tile in the 3D Tileset refined, which imagery layer failed, or which entity ID was picked.” Custom shaders and exotic post-processing must work within Cesium’s material and render-pipeline model or bypass the engine entirely. Default quickstarts assume **Cesium ion** (hosted terrain, imagery, tiling) — optional but creates product gravity toward ion tokens, ion tiling pipelines, or self-hosted ion unless you deliberately wire open imagery/terrain providers and self-hosted 3D Tiles. Mixing CesiumJS and a parallel Three.js canvas (e.g. BIM from That Open or xeokit) requires deliberate georeferencing glue, not a built-in fusion layer.
+
+### When it does not apply
+
+Situations where this package is a poor fit or largely irrelevant: experiments are general Three.js learning or decorative scenes with no geographic anchor; assets are small `.glb`/`.gltf` from `common/assets/` with no streaming or LOD requirement; the workload is room- or building-scale BIM with rich IFC metadata (That Open Engine or xeokit are closer entries); the need is analytical overlays on flat maps — heatmaps, flow fields, sensor plumes — without a full globe engine (deck.gl); the team only wants a UI-framework bridge over ordinary meshes (Threlte/R3F); or the goal is to render 3D Tiles **inside** an existing Three.js app without replacing the engine — use `3DTilesRendererJS` or similar instead of adopting CesiumJS wholesale.
+
+### Overlap with other catalogue entries
+
+**Alternative to:** loading 3D Tiles via Three.js add-ons (`3DTilesRendererJS`, `three-loader-3dtiles`, iTowns) when you want geospatial streaming but must keep `THREE.Scene` as the rendering core. **Complementary to (in principle):** That Open Engine or xeokit for building models on a georeferenced site — Cesium provides terrain, imagery, and site context; the BIM viewer provides element-level metadata and sectioning; integration is deliberate glue (aligned coordinates, multiple canvases, or 3D Tiles exported from both pipelines). **Complementary to (in principle):** deck.gl for analytical layers (methane plumes, heatmaps, paths) draped on or alongside a Cesium globe — deck.gl can target the same WebGL context in some integrations, but that is an explicit composition choice. **Largely orthogonal to:** React Three Fiber, drei, Threlte, and react-three-rapier — UI-framework bridges over Three.js, not geospatial engines; Cesium has its own React wrappers in the ecosystem but they are not catalogue entries here. **Different concern from:** native imperative Three.js curriculum steps, which teach APIs CesiumJS does not expose.
+
+### Stack lock-in
+
+Commits to the CesiumJS npm package (`cesium`), its module/asset layout (Workers, Assets, Widgets CSS), and geospatial data sources: **3D Tiles** tilesets (local or streamed), terrain and imagery providers, and optionally **Cesium ion** (cloud tiling, hosting, global curated terrain/imagery/buildings) or **Cesium ion Self-Hosted**. Architectural gravity toward `Viewer` + `Cesium3DTileset` + imagery/terrain providers; entity API for dynamic content; CZML or custom data sources for time-varying layers. No Three.js version pin — instead, no Three.js in the rendering path. Bundlers must copy Cesium static assets (or use official build integration). Optional **Cesium ion SDK** adds commercial analytics widgets on top of CesiumJS. Coordinate workflows assume WGS84 unless you bring custom ellipsoids or local tangent frames.
+
+### Licensing
+
+**CesiumJS** is **Apache License 2.0** — **liberal open source** (commercial and non-commercial use without royalty). **Cesium ion** (hosted data, tiling pipelines, global curated content) is a **commercial** subscription with a free tier for non-commercial use — not required to run CesiumJS, but the default quickstart path uses ion-hosted assets. **Cesium ion SDK** is a separate **commercial** add-on for advanced analytics. Self-hosted tilesets, open imagery (e.g. OSM, USGS), and offline demos avoid ion data licensing but you still manage your own content pipeline.
+
+### Portability constraints
+
+Three.js concepts (materials, glTF as tile payload, frustum culling, LOD thinking) inform what you build, but native step modules (`buildScene`, `useFrame`, manual `dispose`, `GLTFLoader`) do not port — neither do That Open Fragments nor xeokit XKT patterns. Shared repo assets in `common/assets/` (`.glb`, `.hdr`, textures) are usable only after geolocation and scale are assigned (entity position/orientation/height reference) or after conversion to 3D Tiles; they are not drop-in `GLTFLoader` curriculum inputs. Pure logic in `common/lib/` (math, colour, data structures) remains portable if it does not assume Y-up arbitrary units. Svelte HUD panels from `experiments/native/src/hud/` can wrap a Cesium `Viewer` container (framework-agnostic bootstrap), but globe widgets, layer pickers, and timeline UI become geospatial-specific. Step launch/isolation patterns (Makefile, query param) mirror other experiments, but bootstrap centres on `Viewer` construction, ion token or alternate providers, and tileset URLs. Skills from native steps 12 (instancing/LOD) and 8 (GLTF) map to *why* 3D Tiles exists, not to Cesium API names.
+
+### Mental model shift from native Three.js
+
+In `experiments/native`, a step exports `meta`, builds a `THREE.Scene` in arbitrary units, places a camera at `[0, 2, 5]`, and animates meshes in local space. With CesiumJS, the world is an **ellipsoid**: positions are `Cartesian3` in ECEF or `Cartographic` (lon/lat/height); “up” varies by location; large coordinates need double-precision paths inside the engine. Content arrives as **streamed tile hierarchies** (`Cesium3DTileset`) that refine based on screen-space error, not as a single loaded `GLTFScene` graph you traverse once. The render loop is owned by `Viewer`/`Scene` rather than explicit step-9 `requestAnimationFrame`. Picking returns entities or tile features with geospatial context, not just `faceIndex` on a mesh. Time is often first-class (`Clock`, `JulianDate`) for dynamic tracks. Disposal means destroying tilesets, imagery layers, and data sources through Cesium APIs, not only `geometry.dispose()` on hand-built buffers.
+
+### Touchpoints with the "native" three.js experiments in this repo.
+
+Conceptual parallels only — native step **code** does not run on CesiumJS. The mapping describes the **geospatial concern**, not a Three.js API wrapper.
+
+| Native step | Concern CesiumJS addresses (not a Three.js wrapper) |
+|-------------|--------------------------------------------------------|
+| 1 — Scene graph | `Entity` collections and tileset hierarchies replace hand-built `Object3D` trees; transforms are georeferenced. |
+| 2 — Cameras | `Camera` + globe controllers (`ScreenSpaceCameraController`); fly-to and terrain collision replace simple orbit demos. |
+| 3–4 — Geometry & materials | Tile payloads (glTF, point clouds, voxels) and Cesium materials; less manual `BufferGeometry` lab work. |
+| 5–7 — Lights, PBR maps, textures | Sun/sky/atmosphere and globe lighting; imagery layers for surface texturing. |
+| 8 — GLTF loading | glTF often arrives inside 3D Tiles batches, not via `GLTFLoader` directly. |
+| 9 — OrbitControls & render loop | Viewer-driven render loop and geospatial navigation, not manual `requestAnimationFrame`. |
+| 10 — Raycasting | `Scene.pick` / drill pick on globe, entities, and 3D Tiles features with metadata. |
+| 11 — Keyframe animation | `SampledProperty`, CZML, and clock-driven entity motion along geographic paths. |
+| 12 — InstancedMesh | 3D Tiles hierarchical LOD and instancing across massive tilesets. |
+| 13–14 — Custom geometry & shaders | `CustomShader` on 3D Tiles and material APIs; off the idiomatic globe/tileset path. |
+| 15 — Post-processing | Built-in atmosphere, fog, and optional post stages; not hand-built `EffectComposer`. |
+| 16–17 — IBL, render targets | Globe environment and multi-view via multiple viewers or split views. |
+| 18 — Lines, edges, points | `Polyline`, `Corridor`, `PointPrimitive`, point-cloud tiles. |
+| 19–20 — Morph, LOD | Tile refinement replaces manual `LOD` groups; morph targets uncommon in geospatial tiles. |
+| 21 — CSS2D overlay | HTML overlays via standard DOM on top of the canvas; `InfoBox` / custom HUD. |
+| 22 — Clipping | Clipping planes on tilesets and globe; terrain excavation patterns. |
+| 23 — Resource lifecycle | `destroy()` on tilesets, imagery layers, and data sources replace manual dispose lists. |
+| 24 — Multi-viewport | Multiple `Viewer` instances or `CesiumWidget` per container. |
+| 25 — WebGPU | Cesium’s documented path is WebGL; WebGPU is not the current primary backend. |
 
 ---
 
