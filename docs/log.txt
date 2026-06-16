@@ -11,6 +11,9 @@
 o  deploy
 o  share with Ehsan with cover note
 
+o  start high level survey of third party packages
+o  digress at some point to look at the IFC standards
+
 
 
 o  Questions to remember
