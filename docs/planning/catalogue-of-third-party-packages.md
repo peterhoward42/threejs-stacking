@@ -344,6 +344,76 @@ Conceptual parallels only — native step **code** does not run on CesiumJS. The
 
 A high-performance WebGL/WebGPU visualisation framework for large datasets. Particularly relevant for analytical overlays such as methane plumes, sensor fields, heatmaps, flow visualisations, event layers, and other spatial-temporal data representations.
 
+### When it applies
+
+This package is intended when a Three.js app can be characterised as having these properties, required features, or constraints: the primary content is **large tabular or geospatial datasets** (millions of points, paths, polygons, or time-stamped events) rather than a small hand-authored mesh scene; visualisation is **layer-oriented and data-driven** — position, colour, size, and height come from accessors over arrays or loaders, not from per-object `Object3D` construction; the view is **map-anchored or projection-aware** (Web Mercator with Mapbox/MapLibre, globe, or explicit `OrbitView` / `OrthographicView` for info-vis); users need **analytical encodings** such as heatmaps, hex/screen aggregation, arcs, trips animation, contours, or 3D extrusions at interactive frame rates; and the goal is **sensor fields, flow overlays, event density, or site-scale analytical context** on top of (or beside) a basemap or globe — not a general-purpose mesh playground or BIM viewer. It also fits when you want GPU instancing, projection shaders, and picking over massive datasets without building a custom `InstancedMesh` + shader pipeline on raw Three.js.
+
+### What it owns vs what Three.js still owns
+
+**It is not a Three.js layer by default.** deck.gl renders through **luma.gl** (`Model`, shader modules, WebGL2/WebGPU device management), not `THREE.*` types. For this catalogue, deck.gl is an **alternative analytical-visualisation engine** that can sit **alongside** or **over** map/globe basemaps — not something that extends the native Three.js experiments the way React Three Fiber does. Three.js *concepts* (instancing, attributes, uniforms, frustum thinking) transfer; Three.js *code* from `experiments/native` does not drop in.
+
+deck.gl owns: the **layer** abstraction (`ScatterplotLayer`, `PathLayer`, `GeoJsonLayer`, `HeatmapLayer`, `HexagonLayer`, `TripsLayer`, `PointCloudLayer`, `Tile3DLayer`, etc.); **view and projection** (`MapView`, `GlobeView`, `OrbitView`, `OrthographicView`, `viewState`, controllers); **GPU batching and picking** across millions of primitives; **geospatial coordinate modes** (`LNGLAT`, `METER_OFFSETS`, `CARTESIAN`, etc.); integration with **base maps** via `@deck.gl/mapbox` (`MapboxOverlay` — overlaid or interleaved into Mapbox/MapLibre WebGL2); and optional **loaders.gl** pipelines for GeoJSON, MVT, 3D Tiles, point clouds, and Arrow. The `Deck` / `DeckGL` root owns the render loop and layer lifecycle.
+
+Three.js enters only on **optional escape paths**: `@deck.gl/mesh-layers` / `SimpleMeshLayer` for glTF-style meshes in geographic space; `@deck.gl-community/three` for community layers backed by Three.js geometry (e.g. procedural `TreeLayer`); or a separate Three.js canvas composed manually. Surrounding UI (Svelte HUD, forms, routing) remains ordinary app code unless `@deck.gl/react` is adopted (this repo’s Svelte constraint favours vanilla `Deck` or thin wrappers).
+
+### Problems it solves as a Three.js partner
+
+Without it you would need to implement: GPU instancing and attribute buffers for millions of points, lines, or extruded polygons; geospatial projection from WGS84 (or local metres) into clip space aligned with slippy-map tiles; aggregation passes (hex bins, screen-space heatmaps, contours); time-varying layer updates (`TripsLayer`-style paths); efficient picking and hover/click over dense data; and synchronization with an external map camera when overlays must share depth with map labels or 3D buildings. That work tends to be challenging or undesirable because: projection and tile alignment require geospatial domain knowledge; aggregation shaders and memory budgeting for large datasets are sustained engineering; map interleaving needs shared WebGL2 context management; and reimplementing deck.gl’s layer catalogue on raw Three.js duplicates a mature vis.gl stack.
+
+### What you lose by adopting it
+
+The scene becomes mediated by **layers, accessors, and `viewState`**: you do not build a free-form `THREE.Scene` graph of meshes, lights, and materials as in the native curriculum. Arbitrary `.glb` assets from `common/assets/` are not the idiomatic input — they appear via mesh layers or a parallel Three.js viewer, not `GLTFLoader` + `scene.add`. PBR material labs, custom `ShaderMaterial` experiments, and hand-rolled `EffectComposer` pipelines are off the main path unless you fork layers or run a second renderer. Debugging shifts from “inspect `scene.children`” to “which layer’s `updateState` ran, which `viewState` field moved the camera, which accessor returned NaN.” Geospatial `MapView` assumes lon/lat (or compatible offsets) for data — not arbitrary unit-cube coordinates. Mixing deck.gl with a full BIM viewer (That Open, xeokit) or a Cesium globe requires deliberate camera and coordinate glue; interleaved Cesium + deck.gl is possible in principle but not a turnkey fusion. Default map examples create gravity toward **Mapbox** or **MapLibre** tokens and tile services unless you supply open tiles or run without a basemap (`OrbitView` / `OrthographicView`).
+
+### When it does not apply
+
+Situations where this package is a poor fit or largely irrelevant: experiments are general Three.js learning or decorative mesh scenes with no spatial-temporal data; assets are small `.glb`/`.gltf` from `common/assets/` with no overlay or analytics requirement; the workload is room- or building-scale BIM with IFC metadata and sectioning (That Open Engine or xeokit); the need is **full globe terrain, imagery pyramids, and hierarchical 3D Tiles site streaming** as the primary engine (CesiumJS, or `3DTilesRendererJS` inside Three.js); the team only wants a UI-framework bridge over ordinary meshes (Threlte/R3F); or the visualisation is a handful of animated primitives where native step 12 (`InstancedMesh`) and step 9’s render loop suffice.
+
+### Overlap with other catalogue entries
+
+**Complementary to (in principle):** CesiumJS for globe/site context with deck.gl analytical layers (heatmaps, paths, sensor plumes) synchronized or interleaved — explicit camera glue, not built-in fusion. **Complementary to (in principle):** That Open Engine or xeokit for building models with deck.gl site-scale sensor or event overlays — separate canvases or aligned coordinates. **Alternative to:** hand-rolled Three.js instancing + custom shaders for large geospatial point/path layers when you do not need `THREE.Scene` as the core. **Partial alternative to:** CesiumJS for **3D Tiles only** via `Tile3DLayer` + loaders.gl when a map-aligned analytical stack is enough and a full `Viewer` is not — geospatial views still required; `OrbitView`-only 3D Tiles is limited. **Largely orthogonal to:** React Three Fiber, drei, Threlte, and react-three-rapier — UI-framework bridges over Three.js; deck.gl has `@deck.gl/react` but that is a different composition model. **Different concern from:** native imperative Three.js curriculum steps, which teach mesh-graph APIs deck.gl does not expose.
+
+### Stack lock-in
+
+Commits to the **vis.gl** npm ecosystem: `@deck.gl/core`, `@deck.gl/layers`, often `@deck.gl/aggregation-layers`, `@deck.gl/geo-layers`, and **luma.gl** as the GPU backend. Architectural gravity toward **layer lists**, **accessor functions** (`getPosition`, `getColor`, `getRadius`), and **`viewState`**-driven cameras. Map-backed apps typically add `@deck.gl/mapbox` and **mapbox-gl** or **maplibre-gl** (overlaid or interleaved rendering; interleaved needs WebGL2). Data pipelines often pair **loaders.gl** (GeoJSON, MVT, 3D Tiles, LAS, Arrow). Optional **Mapbox** access tokens or self-hosted vector/raster tiles. **WebGPU** support is arriving via luma.gl v9+ — transitional dual backend, not yet the default path for all layers. Submodule versions should stay synchronized across `@deck.gl/*` packages. Svelte HUDs wrap a `Deck` canvas without requiring React; `@deck.gl/react` is optional ecosystem gravity for React teams only.
+
+### Licensing
+
+**deck.gl** and its official `@deck.gl/*` submodules are **MIT License** — **liberal open source**. **luma.gl** and **loaders.gl** (common companions) are also MIT in the vis.gl org. **Mapbox GL JS** and hosted Mapbox tiles are **commercial** products with free tiers — not required for deck.gl itself (MapLibre and custom tile URLs are viable). **Cesium ion** or other tile hosts used by `Tile3DLayer` carry their own terms separate from deck.gl’s licence.
+
+### Portability constraints
+
+Three.js concepts (instancing, attributes, draw-call budgeting, picking) inform what you build, but native step modules (`buildScene`, `useFrame`, manual `dispose`, `GLTFLoader`, `Raycaster`) do not port — deck.gl is layer- and `Deck`-centric. Shared repo assets in `common/assets/` (`.glb`, `.hdr`, textures) are not drop-in inputs unless re-expressed as mesh-layer payloads with geographic positions or rendered on a parallel Three.js canvas. Pure logic in `common/lib/` (math, colour scales, time-series parsing, GeoJSON helpers) remains portable. Tabular or GeoJSON datasets prepared for analytics can move between experiments if coordinates are consistent. Svelte HUD panels from `experiments/native/src/hud/` can wrap a deck.gl container (framework-agnostic bootstrap), but layer controls, time sliders, and legend UI become visualisation-specific. Step launch/isolation patterns (Makefile, query param) mirror other experiments, but bootstrap centres on `Deck` construction, `layers` props, and optional map overlay setup. Skills from native steps 10 (picking), 12 (instancing), and 14 (shaders) map to *why* deck.gl’s layer model exists, not to interchangeable APIs.
+
+### Mental model shift from native Three.js
+
+In `experiments/native`, a step exports `meta`, builds a `THREE.Scene`, adds meshes, wires `OrbitControls`, and mutates objects in `requestAnimationFrame`. With deck.gl, the entry point is a **`Deck`** (or `DeckGL`) with a **`layers` array** and **`viewState`**: each layer is a typed visualisation (scatter, path, heatmap) configured with **data** plus **accessor functions**, not `new THREE.Mesh()`. The camera is **`viewState`** (latitude, longitude, zoom, pitch, bearing for `MapView`; `target` and rotation for `OrbitView`) updated by controllers or your HUD — not a `PerspectiveCamera` you position manually. Updates are **declarative**: change `layers` or `data` and deck.gl diffing rebinds GPU buffers rather than traversing `scene.children`. Picking returns **picked layer and object index** from layer state, not `faceIndex` on a mesh. Time-dynamic data uses layer `updateTriggers` or time-aware layers (`TripsLayer`), not `AnimationMixer`. Disposal is layer `finalizeState` and destroying the `Deck` instance — not per-geometry `dispose()` on hand-built buffers, though custom layers using luma.gl models still need GPU cleanup.
+
+### Touchpoints with the "native" three.js experiments in this repo.
+
+Conceptual parallels only — native step **code** does not run on deck.gl. The mapping describes the **analytical / geospatial concern**, not a Three.js API wrapper.
+
+| Native step | Concern deck.gl addresses (not a Three.js wrapper) |
+|-------------|-----------------------------------------------------|
+| 1 — Scene graph | Layer stack and `views` replace hand-built `Object3D` trees; hierarchy is data partitions and layer order, not parent/child meshes. |
+| 2 — Cameras | `viewState` + `MapView` / `OrbitView` / `OrthographicView` replace manual `PerspectiveCamera` setup; map sync via `@deck.gl/mapbox`. |
+| 3–4 — Geometry & materials | Layers generate GPU geometry internally; styling via accessors (`getColor`, `getElevation`) rather than `MeshStandardMaterial` grids. |
+| 5–7 — Lights, PBR maps, textures | Limited; extruded polygons and mesh layers approximate 3D surfaces without per-step PBR labs. |
+| 8 — GLTF loading | Parallel path: `SimpleMeshLayer` / scenegraph loaders, not curriculum `GLTFLoader` + traverse. |
+| 9 — OrbitControls & render loop | `Deck` owns the loop; controllers update `viewState` instead of manual `requestAnimationFrame` + `OrbitControls`. |
+| 10 — Raycasting | Layer picking (`onClick`, `onHover`, `getPickingInfo`) over instanced data, not raw `Raycaster`. |
+| 11 — Keyframe animation | `TripsLayer` and time-varying data + `updateTriggers`; not `AnimationMixer` on rigged meshes. |
+| 12 — InstancedMesh | Core strength — GPU instancing across Scatterplot, Path, Column, and aggregation layers at millions of features. |
+| 13–14 — Custom geometry & shaders | Custom layers via luma.gl `Model` and deck.gl layer subclassing; off the idiomatic declarative layer path. |
+| 15 — Post-processing | Screen-space aggregation (HeatmapLayer, ScreenGridLayer) rather than `EffectComposer` bloom/FXAA demos. |
+| 16–17 — IBL, render targets | Not central; basemap imagery provides context; offscreen passes live inside layer implementations. |
+| 18 — Lines, edges, points | `PathLayer`, `LineLayer`, `PointCloudLayer`, `ScatterplotLayer` as first-class analytical primitives. |
+| 19–20 — Morph, LOD | Data thinning and aggregation layers approximate LOD; morph targets are not a typical use case. |
+| 21 — CSS2D overlay | DOM HUD and map popups (`Popup` on MapLibre/Mapbox) alongside the canvas; same composition pattern as other viewers. |
+| 22 — Clipping | Layer `extensions` and mask layers; not curriculum `clippingPlanes` on arbitrary meshes. |
+| 23 — Resource lifecycle | `Deck.finalize` and layer state teardown replace manual per-geometry `dispose()` lists. |
+| 24 — Multi-viewport | Multiple `View` instances in one `Deck` (e.g. minimap + main `MapView`). |
+| 25 — WebGPU | luma.gl WebGPU backend in deck.gl v9+ direction; WebGL2 remains the current default for most layers. |
+
 ---
 
 ## Per-package survey template
