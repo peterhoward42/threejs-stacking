@@ -56,6 +56,10 @@ Situations where this package is a poor fit or largely irrelevant: the UI stack 
 
 Commits to React (and typically a React bundler toolchain: Vite, Next.js, etc.) for anything that touches the canvas. Ecosystem gravity pulls toward `@react-three/drei`, `@react-three/postprocessing`, and other R3F-native packages rather than raw Three.js examples copy-pasted from the official docs. Patterns like `useFrame`, declarative `<mesh>`, and loader hooks become the idiomatic surface — porting later means rewriting scene construction, not just swapping imports. React 18+ concurrent features and strict-mode double-mounting affect how scenes initialise and dispose.
 
+### Licensing
+
+`@react-three/fiber` is published under the **MIT License** — **liberal open source**.
+
 ### Portability constraints
 
 Three.js knowledge transfers directly: material types, geometry, loaders, lighting models, and shader concepts are the same objects underneath. Shared repo assets in `common/assets/` (`.glb`, `.hdr`, textures) remain usable via `useLoader` or imperative loaders inside R3F components. Curriculum logic that is pure math, colour utilities, or data structures could live in `common/lib/`. What does not port cleanly: native step modules written as `buildScene()` + `update(dt)` + manual `renderer.render()` loops — those want rewriting as components and hooks; Svelte HUD panels from `experiments/native/src/hud/` do not drop into an R3F experiment without a React rewrite or a separate React HUD layer; step launch/isolation patterns may mirror the native Makefile/query-param approach but the implementation is package-specific.
@@ -150,6 +154,10 @@ Situations where this package is a poor fit or largely irrelevant: the experimen
 
 Commits to the That Open npm ecosystem: `@thatopen/components`, `@thatopen/components-front`, `@thatopen/fragments`, and the `web-ifc` WASM parser as peer dependencies. Architectural gravity toward the `Components` singleton registry, `Worlds` lifecycle, and Fragments as the canonical model representation. Three.js version must match what the That Open packages declare. IFC-centric workflows assume server- or client-side conversion to `.frag` via `IfcImporter`. Ecosystem extensions are written as custom `Component` subclasses registered on the same `Components` instance. TypeScript and TSDoc are the documented surface; bundlers must handle WASM workers used by Fragments and `web-ifc`.
 
+### Licensing
+
+Licensing is **segmented across the stack**. The That Open npm packages (`@thatopen/components`, `@thatopen/components-front`, `@thatopen/fragments`) are **MIT** — **liberal open source**. The IFC parser peer dependency `web-ifc` is **Mozilla Public License 2.0 (MPL 2.0)** — **rigid open source** (file-level copyleft: modifications to MPL-covered source must be shared under MPL, though larger proprietary applications can combine with it more freely than under GPL).
+
 ### Portability constraints
 
 Three.js concepts (cameras, lights, materials, render loop) transfer, but scene construction patterns from `experiments/native` do not drop in: native steps build meshes imperatively and load GLTF; That Open expects Fragments models loaded through `IfcLoader` / `FragmentsManager`. Shared repo assets in `common/assets/` (`.glb`, `.hdr`, textures) are not the primary input path unless you add a parallel non-BIM layer. Pure math, colour utilities, or data structures in `common/lib/` remain viable. Svelte HUD panels from `experiments/native/src/hud/` can wrap a That Open canvas (the platform is framework-agnostic), but property panels, storey lists, and classification UI become BIM-specific rather than reusable across catalogue entries. Step launch/isolation patterns (Makefile, query param, per-experiment Makefile) mirror other experiments, but the implementation is package-specific bootstrap code around `Components.init()` and `Worlds`.
@@ -188,7 +196,71 @@ In `experiments/native`, a step exports `meta`, constructs a `THREE.Scene` imper
 
 A web-based engineering and BIM viewer aimed at large models. It provides capabilities around metadata-driven interaction, selection, sectioning, visibility management, and handling of complex engineering datasets.
 
+This entry is written **relative to [That Open Engine](#that-open-engine)** because both packages solve the same class of problem — large AECO models in the browser with BIM-aware picking, sectioning, and property-driven visibility — and a second full template survey would largely duplicate that section. Read That Open first for the shared “when it applies,” problems solved, and overlap with R3F/Threlte/Cesium/deck.gl; what follows is what is **the same**, what **differs**, and what that means for this repo.
 
+### Like That Open Engine
+
+The fit profile is essentially the same: primary data is building or infrastructure geometry with per-element metadata; users need viewer workflows (sectioning, isolation, measurement, highlighting, filtering by type or property); models are too large for naive single-file GLTF loading; and the goal is a BIM or digital-twin shell rather than a general Three.js curriculum canvas. Both are framework-agnostic — a Svelte HUD from `experiments/native/src/hud/` can wrap either bootstrap without adopting R3F or Threlte. Both assume an offline or server-side conversion step from IFC (and other AEC formats) into a web-optimised binary representation before the browser loads anything at scale. Both largely replace the native curriculum’s hand-rolled scene graph, loader callbacks, raycasting, clipping, and disposal patterns for BIM workloads rather than extending them incrementally.
+
+### Notable differences
+
+**It is not a Three.js layer.** That Open Engine builds on Three.js (`SimpleRenderer`, `Object3D`, materials, lights) and wraps BIM semantics above it. xeokit ships its **own WebGL renderer** (lineage from SceneJS and xeogl). Cameras, scene graph, materials, batched draw calls, and the render loop are xeokit APIs — not `THREE.*`. For this catalogue, xeokit is an **alternative BIM viewer stack**, not something that sits “above” the native Three.js experiments in the same way That Open does. Three.js *concepts* (scene graph, transforms, frustum culling, PBR-ish materials) transfer; Three.js *code* from `experiments/native` does not drop in.
+
+**Different canonical model pipeline.** That Open centres on **Fragments** (`.frag`, FlatBuffers, `web-ifc`, `@thatopen/fragments` workers). xeokit centres on **XKT** — a compact double-precision binary format produced by **xeokit-convert** (`convert2xkt` CLI or Node APIs). IFC can be parsed into XKT (directly or via intermediate GLB); glTF, CityJSON, LAS/LAZ, OBJ, STL, 3DXML, and dotBIM are also on the supported import path. Multi-model federation (several converted models in one scene) is a first-class use case.
+
+**Different application architecture.** That Open uses a `Components` registry of opt-in singletons and `Worlds` (scene + camera + renderer bundles). xeokit V3 separates **data graph**, **scene representation**, **viewer** (visual state: visibility, x-ray, slicing, camera), and **renderer** (pluggable backend; WebGL today, WebGPU-oriented). Multi-canvas / multi-view layouts (e.g. perspective + plan) are built into that split rather than requiring multiple `World` instances.
+
+**Licensing is stricter.** That Open’s npm packages are MIT; its IFC parser peer `web-ifc` is MPL 2.0. xeokit-sdk is **AGPL-3.0** — **rigid open source** with network copyleft: distributing a modified viewer or offering it as a network service typically requires releasing corresponding source under AGPL unless a **commercial licence** is obtained from Creoox AG. This is a materially different constraint for closed or SaaS products than That Open’s stack.
+
+**BCF and collaboration.** xeokit documents **BCF Viewpoints** for BIM collaboration workflows. That Open’s catalogue entry does not centre BCF; integration with issue/trackers is a differentiator to weigh if BCF is in scope.
+
+**Ecosystem shape.** That Open is a component platform (`@thatopen/components`, `@thatopen/components-front`) you assemble. xeokit offers the lower-level **xeokit-sdk** plus optional turnkey **xeokit-bim-viewer** (IFC viewer built on the SDK, e.g. with OpenProject). Tooling includes **xeokit-convert** and Creoox’s **ifc2gltf** for IFC → GLB on the path to XKT.
+
+### When it does not apply (xeokit-specific)
+
+Beyond the shared “no BIM / use GLTF curriculum assets only” cases in the That Open section: any experiment whose **purpose is learning or extending Three.js itself** should stay on native (or R3F/Threlte), because xeokit does not expose the Three.js scene graph. If **AGPL obligations** or commercial-licence cost are unacceptable, xeokit is a poor default compared to MIT-based stacks. If the workload is **globe-scale geospatial streaming** (CesiumJS) or **analytical map overlays** (deck.gl), xeokit is the wrong primary engine — same as That Open.
+
+### Stack lock-in (summary)
+
+Commits to the xeokit npm ecosystem (`xeokit-sdk` or the newer modular `@xeokit/sdk` packages), **XKT** (or runtime conversion via xeokit-convert) as the performant path, and xeokit’s viewer/renderer/scene APIs. No Three.js version pin — instead, no Three.js at all in the rendering path. Bundlers must serve converted model assets; Node.js tooling is available for preprocessing. Custom rendering features mean working within xeokit’s renderer extension points, not dropping in arbitrary `THREE.ShaderMaterial` demos from the native steps.
+
+### Portability constraints (summary)
+
+Shared repo assets in `common/assets/` (`.glb`, `.hdr`, textures) are not the idiomatic BIM input; they could be converted to XKT for experiments but that is a deliberate pipeline step, not `GLTFLoader` + `scene.add`. Pure logic in `common/lib/` (math, colour, data structures) remains portable. Native step modules (`buildScene`, `useFrame`, manual `dispose`) do not port — neither do That Open Fragments patterns. Skills learned in the native curriculum inform *what* to build (clipping, picking, LOD) but the *how* is xeokit-specific. A project that chose That Open and later switched to xeokit (or vice versa) would rewrite the viewer layer and model pipeline, not swap imports.
+
+### Mental model shift from native Three.js
+
+Same high-level shift as That Open for **BIM domain** thinking: models are element collections with metadata, not a handful of meshes you authored in code; picking returns entity IDs and properties; sectioning and visibility are viewer concerns. The additional shift is **engine replacement**: there is no `THREE.Scene` to inspect in DevTools — debugging is tracing xeokit scene/viewer events and model object IDs. Double-precision coordinates and batched geometry for full-building models are handled inside xeokit rather than through manual `InstancedMesh` or curriculum step 12.
+
+### Touchpoints with the "native" three.js experiments in this repo.
+
+Conceptual parallels only — native step **code** does not run on xeokit. The mapping mirrors the That Open table; cells describe the **BIM concern**, not a Three.js API wrapper.
+
+| Native step | BIM concern xeokit addresses (not a Three.js wrapper) |
+|-------------|--------------------------------------------------------|
+| 1 — Scene graph | IFC spatial structure and federated models in xeokit’s scene/data graph, not hand-built `Object3D` trees. |
+| 2 — Cameras | Viewer camera APIs; multi-view via multiple canvases on one scene. |
+| 3–4 — Geometry & materials | Geometry arrives via XKT/import plugins; materials are xeokit-managed. |
+| 5–7 — Lights, PBR maps, textures | Lighting and materials through xeokit’s renderer, not per-step `MeshStandardMaterial` labs. |
+| 8 — GLTF loading | Parallel path: convert → XKT (or load glTF through conversion APIs), not `GLTFLoader`. |
+| 9 — OrbitControls & render loop | Viewer controllers and renderer-driven loop, not manual `requestAnimationFrame`. |
+| 10 — Raycasting | Entity picking with metadata, not raw `Raycaster` + `faceIndex`. |
+| 11 — Keyframe animation | Not central; 4D/sequencing possible but not the default BIM path. |
+| 12 — InstancedMesh | Internal batching for large element counts. |
+| 13–14 — Custom geometry & shaders | Possible via renderer extension; off the idiomatic XKT viewer path. |
+| 15 — Post-processing | Renderer/visual-state features rather than hand-built `EffectComposer`. |
+| 16–17 — IBL, render targets | Secondary views via multi-canvas; not the primary tutorial focus. |
+| 18 — Lines, edges, points | Measurement and annotation plugins. |
+| 19–20 — Morph, LOD | Streaming/LOD at model level; morph targets uncommon in BIM viewers. |
+| 21 — CSS2D overlay | DOM annotations alongside canvas; same HUD composition pattern as other viewers. |
+| 22 — Clipping | First-class section planes / slicing in the viewer API. |
+| 23 — Resource lifecycle | Model and viewer destruction APIs replace manual `dispose()` lists. |
+| 24 — Multi-viewport | Native multi-canvas support on one scene. |
+| 25 — WebGPU | Pluggable renderer direction in V3; WebGL is the current documented backend. |
+
+### Overlap with other catalogue entries
+
+**Alternative to:** That Open Engine for large web BIM viewers — compare XKT vs Fragments, AGPL vs MIT/MPL, and Three.js-underneath vs standalone engine. **Largely orthogonal to:** React Three Fiber, drei, Threlte, react-three-rapier (UI-framework bridges over Three.js). **Complementary to (in principle):** CesiumJS or deck.gl for site/geospatial context with xeokit handling the building — glue required. **Different concern from:** native imperative Three.js steps, which teach APIs xeokit does not use.
 
 ---
 
@@ -237,6 +309,10 @@ Situations where this package is a poor fit or largely irrelevant: <simpler nati
 ### Stack lock-in
 
 <Frameworks, runtimes, services, data formats, or architectural commitments this package assumes or pulls in.>
+
+### Licensing
+
+<Name the licence(s) for this package. Classify each as **liberal open source** (permissive licences such as MIT or BSD), **rigid open source** (copyleft licences such as GPL or LGPL), or **commercial**. If the package offers more than one licensing model or different parts of the stack use different licences, say so.>
 
 ### Portability constraints
 
