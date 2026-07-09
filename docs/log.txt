@@ -1,22 +1,76 @@
-*  be clear about independence of each native experiment
-*  auto gen native:1
-*  auto gen native:2
-*  auto gen native:3
+o  this is three js stacking log
 
-*  create set of feature demo pages
-*  put ui in front of the native demos
-*  prep for deployment architecture to share
-*  put in spa svelte deployment capability
-*  add source url to home
-o  deploy
-o  share with Ehsan with cover note
+o  read eshan's request very carefully
+	o  Suresh and Sam day to day
+	o  Me strategic advisor
+	o  To steer architecture rather than hands on contractor
+	o  To map out high-level 3D visualisation design
+	o  Based on 700 to 800 per day
+	o  Biofuel_3Dmodel.glb
+	o  A2878UK_3D Model Three Maids_20250520.nwd (navisworks)
+		o  thinks native Autodesk
+		o  had to use an APS ? to to render in lovable dashboard
 
-o  start high level survey of third party packages
-o  digress at some point to look at the IFC standards
+o  make sure I have taken in the scope and deliverables for the estimate
+	o  Analysis
+		o  Understand these input formats
+		o  What is the set of likely inputs beyond those given?
+		o  Can the set be generalised?
+		o  Understand pre processing needs
+		o  What is inject LOD pathway?
+		o  What nav / viewing tool set do we want?
+	o  Work items
+		o  Can we find some analogous use cases for That Open?
+		o  Read the That Open AI analysis more deeply, capturing key
+		   points we must reason over
+		o  See if AI can generate examples of those
+		o  Read and summarise That Open docco myself? Or ask for it from
+		   AI?
+		o  Catalogue what That Open could do for our biz case and 
+		   prioritise them
+		o  Can we bang something up to show loaded (maybe server)
+		o  Server scoping and design
+		o  How attach and use attached information generically?
+		o  Is is just read in 3D, or write as well?
+		o  In which case how do changes reach master source of truth?
+		o  The special case of methane egress information
+		o  Gap analysis between this and what we want
+	o  Sink for not considered yet
+		o  Identity
+		o  Privacy
+		o  Permissions
+		o  i18N
+		o  Front end platform choice
+
+o  Big picture estimable task outlines
+	o  Review some live examples of That Open for match and document
+	o  Collab with Eshan on best guess and sufficiently detailed requirements
+		o  or persuade not to waste time on that - let the journey tell us?
+	o  Choose small number of top priorities we need to understand if they'll
+		work and how
+	o  Do those experiments and capture exercises
+	o  Capture where remaining significant risks remain
+	o  Build up an architectural picture response
+	o  Collab events to deliver the architecture
+	o  Some potential follow up days for collab
+	o  Some model for "oh we didn't think of that"
+
+
+9th Jul
+	1 hour
+
+	o  Start thinking about how to approach estimating and modelling
+	   work - mostly brainstorm of things to learn or discover 
+	   to be ready to reason
+
+	2  hours
+
+	o  Read the previous ThatOpen notes again that we'd captured during the 
+	   third party survey and downselection analysis - but this time at a much 
+	   greater depth and with higher expectations to capture the relevant 
+	   detail. Written up in 
+	   docs/capture/thatopen/capture-topics-we-need-to-drill-into.md
+	o  Started notes on file types and a glossary
 
 
 
-o  Questions to remember
-	o  Curious why LLM chose javascript over typescript
-		o  It makes the code much easier to read
-	o  Does it model vertex and pixel shaders? Re. primitives demo.
